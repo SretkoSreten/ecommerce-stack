@@ -42,26 +42,25 @@ export class ProductService {
     return product;
   }
 
-  async searchProducts(query: any): Promise<ProductItem[]> {
-    const { name } = query;
+  async searchProducts(name: string): Promise<ProductItem[]> {
     const LIMIT = 3;
 
     const queryBuilder = this.entityManager
       .createQueryBuilder(ProductItem, "product_items")
       .leftJoinAndSelect("product_items.product", "product")
-      .leftJoinAndSelect("product.category", "category")
-      .leftJoinAndSelect("product_items.variations", "variationsOption")
-      .leftJoinAndSelect("variationsOption.variation", "variations");
+      .leftJoinAndSelect("product.category", "category");
 
     if (name) {
       queryBuilder.where("product.name LIKE :name", { name: `%${name}%` });
+
+      queryBuilder.take(LIMIT);
+
+      const products: ProductItem[] = await queryBuilder.getMany();
+
+      return products;
     }
 
-    queryBuilder.take(LIMIT);
-
-    const products: ProductItem[] = await queryBuilder.getMany();
-
-    return products;
+    return [];
   }
 
   public async updateProduct(
@@ -160,7 +159,7 @@ export class ProductService {
     return savedProduct;
   }
 
-  async getArrivals():Promise<ProductItem[]> {
+  async getArrivals(): Promise<ProductItem[]> {
     const LIMIT = 8;
     const products = await this.entityManager
       .createQueryBuilder(ProductItem, "product_items")
@@ -168,12 +167,23 @@ export class ProductService {
       .leftJoinAndSelect("product.category", "category")
       .leftJoinAndSelect("product_items.variations", "variationsOption")
       .leftJoinAndSelect("variationsOption.variation", "variations")
-      .limit(LIMIT)
+      .take(LIMIT)
       .getMany();
 
     return products;
   }
 
+  async getSaleProducts(): Promise<ProductItem[]> {
+    const LIMIT = 4;
+    const products = await this.entityManager
+      .createQueryBuilder(ProductItem, "product_items")
+      .leftJoinAndSelect("product_items.product", "product")
+      .leftJoinAndSelect("product.category", "category")
+      .limit(LIMIT)
+      .getMany();
+
+    return products;
+  }
   async getProducts(requirements: GetProductsDto): Promise<any> {
     const {
       minPrice,

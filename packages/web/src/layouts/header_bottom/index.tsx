@@ -1,25 +1,23 @@
-import React, { useState, useRef, useEffect, ChangeEvent } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { HiOutlineMenuAlt4 } from "react-icons/hi";
 import { FaSearch, FaUser, FaCaretDown, FaShoppingCart } from "react-icons/fa";
 import Flex from "../layout/Flex";
-import { Link } from "react-router-dom";
-import { paginationItems } from "../../constants";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchLayout } from "../../actions/layout.actions";
-
-interface Product {
-  _id: number;
-  productName: string;
-  des: string;
-  price: number;
-  img: string;
-}
+import {
+  clearSearch,
+  fetchLayout,
+  searchProducts,
+} from "../../actions/layout.actions";
 
 const HeaderBottom: React.FC = () => {
   const dispatch = useDispatch();
-  const { loading, data } = useSelector((state: any) => state.layout);
+  const { loading, data, searchItems } = useSelector(
+    (state: any) => state.layout
+  );
 
+  const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const [showUser, setShowUser] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -38,19 +36,21 @@ const HeaderBottom: React.FC = () => {
     };
   }, [ref]);
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  if (!data) return;
 
-  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-  };
+  function subtractQuantities(cart: any) {
+    let totalSum = 0;
+    cart.data.forEach((item: any) => {
+      totalSum += item.qty;
+    });
+    return totalSum;
+  }
 
-  useEffect(() => {
-    const filtered = paginationItems.filter((item) =>
-      item.productName.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    setFilteredProducts(filtered);
-  }, [searchQuery]);
+  function navigateToProduct(id: number) {
+    dispatch(clearSearch());
+    return navigate(`/product/${id}`);
+  }
+
 
   return (
     <div className="w-full bg-[#F5F5F3] relative">
@@ -91,36 +91,40 @@ const HeaderBottom: React.FC = () => {
               <input
                 className="flex-1 h-full outline-none placeholder:text-[#C4C4C4] placeholder:text-[14px]"
                 type="text"
-                onChange={handleSearch}
-                value={searchQuery}
+                onChange={(e) => dispatch<any>(searchProducts(e.target.value))}
                 placeholder="Search your products here"
               />
               <FaSearch className="w-5 h-5" />
-              {searchQuery && (
+
+              {searchItems.length > 0 && (
                 <div
-                  className={`w-full mx-auto h-96 bg-white top-16 absolute left-0 z-50 overflow-y-scroll shadow-2xl scrollbar-hide cursor-pointer`}
+                  className={`w-full mx-auto h-96 bg-white top-16 absolute left-0 z-50 shadow-2xl cursor-pointer`}
                 >
-                  {searchQuery &&
-                    filteredProducts.map((item) => (
-                      <div
-                        key={item._id}
-                        className="max-w-[600px] h-28 bg-gray-100 mb-3 flex items-center gap-3"
-                      >
-                        <img className="w-24" src={item.img} alt="productImg" />
-                        <div className="flex flex-col gap-1">
-                          <p className="font-semibold text-lg">
-                            {item.productName}
-                          </p>
-                          <p className="text-xs">{item.des}</p>
-                          <p className="text-sm">
-                            Price:{" "}
-                            <span className="text-primeColor font-semibold">
-                              ${item.price}
-                            </span>
-                          </p>
-                        </div>
+                  {searchItems.map((item: any) => (
+                    <div
+                      onClick={() => navigateToProduct(item.id)}
+                      key={item.id}
+                      className="max-w-[600px] h-28 bg-gray-100 mb-3 flex items-center gap-3"
+                    >
+                      <img
+                        className="w-24"
+                        src={item.product_image}
+                        alt="productImg"
+                      />
+                      <div className="flex flex-col gap-1">
+                        <p className="font-semibold text-lg">
+                          {item.product.name}
+                        </p>
+                        <p className="text-xs">{item.product.description}</p>
+                        <p className="text-sm">
+                          Price:{" "}
+                          <span className="text-primeColor font-semibold">
+                            ${item.price}
+                          </span>
+                        </p>
                       </div>
-                    ))}
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
@@ -163,14 +167,16 @@ const HeaderBottom: React.FC = () => {
                   )}
                 </motion.ul>
               )}
-              <Link to="/cart">
-                <div className="relative">
-                  <FaShoppingCart />
-                  <span className="absolute font-titleFont top-3 -right-2 text-xs w-4 h-4 flex items-center justify-center rounded-full bg-black text-white">
-                    {paginationItems.length > 0 ? paginationItems.length : 0}
-                  </span>
-                </div>
-              </Link>
+              {data.auth.data && (
+                <Link to="/cart">
+                  <div className="relative">
+                    <FaShoppingCart />
+                    <span className="absolute font-titleFont top-3 -right-2 text-xs w-4 h-4 flex items-center justify-center rounded-full bg-black text-white">
+                      {data.cart.data ? subtractQuantities(data.cart) : 0}
+                    </span>
+                  </div>
+                </Link>
+              )}
             </div>
           </Flex>
         </div>

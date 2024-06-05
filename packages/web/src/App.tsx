@@ -16,6 +16,8 @@ import FooterBottom from "./layouts/footer/footerBottom";
 import HeaderBottom from "./layouts/header_bottom";
 import SpecialCase from "./components/scroll";
 import { LogoutConnector } from "./modules/logout";
+import ProductConnector from "./modules/product";
+import CartConnector from "./modules/cart";
 
 const Layout = () => {
   return (
@@ -39,7 +41,9 @@ function App() {
             <Route element={<ProtectedRoute />}>
               <Route index element={<HomeView />} />
               <Route path="/logout" element={<LogoutConnector />} />
+              <Route path="/cart" element={<CartConnector />} />
             </Route>
+            <Route path="/product/:id" element={<ProductConnector />} />
             <Route path="/login" element={<LoginConnector />} />
             <Route path="/register" element={<RegisterConnector />} />
           </Route>

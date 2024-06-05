@@ -8,6 +8,10 @@ export interface ErrorBody extends Error {
         message: 'Email is incorrect',
         code: '60000'
       },
+      notFound: {
+        message: 'Not found',
+        code: '60000'
+      },
       passwordIncorrect: {
         message: 'Password is incorrect',
         code: '60001'

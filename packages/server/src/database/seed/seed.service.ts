@@ -60,17 +60,17 @@ export class SeedService {
       paymentTypeSeeder,
       userPaymentSeeder,
       categorySeeder,
-      productSeeder,
-      cartSeeder,
-      cartItemSeeder,
       variationSeeder,
       variationOptionSeeder,
+      cartSeeder,
+      productSeeder,
+      cartItemSeeder,
       couponSeeder,
       orderStatusSeeder,
       shippingSeeder,
       shopOrderSeeder,
       orderLineSeeder,
-      userReviewSeeder
+      userReviewSeeder,
     ];
   }
   async seed(){

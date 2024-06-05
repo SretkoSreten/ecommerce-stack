@@ -10,9 +10,9 @@ export class ShoppingCartItem {
   @Column('int')
   qty: number;
 
-  @ManyToOne(() => ShoppingCart, cart => cart.items, { nullable: false, onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  @ManyToOne(() => ShoppingCart, cart => cart.items, { nullable: false, onDelete: 'CASCADE' })
   cart: ShoppingCart;
 
-  @ManyToOne(() => ProductItem, productInventory => productInventory.shoppingCartItems, { nullable: false, onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  @ManyToOne(() => ProductItem, productInventory => productInventory.shoppingCartItems, { nullable: false, onDelete: 'CASCADE'})
   productItem: ProductItem;
 }

@@ -38,7 +38,7 @@ const NewArrivals: React.FC<NewArrivalsProps> = ({ products }) => {
         },
       },
     ],
-  };
+  }; 
 
   return (
     <div className="w-full py-16">

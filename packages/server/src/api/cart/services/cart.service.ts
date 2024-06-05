@@ -8,127 +8,194 @@ import { EntityManager, Repository } from "typeorm";
 import { ShoppingCartItem } from "src/database/entities/cart/cart_item.entity";
 import { ProductItem } from "src/database/entities/product/product_item.entity";
 
-
 @Injectable()
 export class CartService {
-    constructor(
-        @InjectRepository(ShoppingCart)
-        private readonly cartRepository: Repository<ShoppingCart>,
-        @InjectRepository(ShoppingCartItem)
-        private readonly cartItemRepository: Repository<ShoppingCartItem>,
-        @InjectRepository(ProductItem)
-        private readonly productItemRepository: Repository<ProductItem>,
-        @InjectEntityManager()
-        private readonly entityManager: EntityManager,
-    ) { }
+  constructor(
+    @InjectRepository(ShoppingCart)
+    private readonly cartRepository: Repository<ShoppingCart>,
+    @InjectRepository(ShoppingCartItem)
+    private readonly cartItemRepository: Repository<ShoppingCartItem>,
+    @InjectRepository(ProductItem)
+    private readonly productItemRepository: Repository<ProductItem>,
+    @InjectEntityManager()
+    private readonly entityManager: EntityManager
+  ) {}
 
-    async getCart(id: number): Promise<ShoppingCart> {
+  async getCart(id: number): Promise<ShoppingCart> {
+    const cart = await this.entityManager
+      .createQueryBuilder(ShoppingCart, "cart")
+      .leftJoinAndSelect("cart.user", "user")
+      .leftJoinAndSelect("cart.items", "items")
+      .leftJoinAndSelect("items.productItem", "product")
+      .where("user.id = :userId", { userId: id })
+      .getOne();
 
-        const cart = await this.entityManager
-            .createQueryBuilder(ShoppingCart, 'cart')
-            .leftJoinAndSelect('cart.user', 'user')
-            .leftJoinAndSelect('cart.items', 'items')
-            .leftJoinAndSelect('items.productItem', 'product')
-            .where('user.id = :userId', { userId: id })
-            .getOne();
+    if (!cart) throw new NotFoundException(errorMessages.cart.notFound);
 
-        if (!cart) throw new NotFoundException(errorMessages.cart.notFound);
+    return cart;
+  }
 
-        return cart;
+  async getUserCart(user: User): Promise<ShoppingCart> {
+    const cart = await this.entityManager
+      .createQueryBuilder(ShoppingCart, "cart")
+      .leftJoinAndSelect("cart.user", "user")
+      .leftJoinAndSelect("cart.items", "items")
+      .leftJoinAndSelect("items.productItem", "productItem")
+      .leftJoinAndSelect("productItem.product", "product")
+      .where("user.id = :userId", { userId: user.id })
+      .getOne();
+
+    if (!cart) throw new NotFoundException(errorMessages.cart.notFound);
+
+    return cart;
+  }
+
+  async getUserCartItems(user: User): Promise<ShoppingCartItem[]> {
+    const cart = await this.entityManager
+      .createQueryBuilder(ShoppingCart, "cart")
+      .leftJoinAndSelect("cart.user", "user")
+      .leftJoinAndSelect("cart.items", "items")
+      .leftJoinAndSelect("items.productItem", "products_items")
+      .leftJoinAndSelect("products_items.product", "products")
+      .where("user.id = :userId", { userId: user.id })
+      .getOne();
+
+    if (!cart) throw new NotFoundException(errorMessages.cart.notFound);
+
+    return cart.items;
+  }
+
+  async deleteCart(cartItemId: number) {
+    const cartItem = await this.entityManager
+      .createQueryBuilder(ShoppingCartItem, "cart_item")
+      .leftJoinAndSelect("cart_item.productItem", "product")
+      .where("cart_item.id = :cartId", { cartId: cartItemId })
+      .getOne();
+
+    if (!cartItem) {
+      throw new NotFoundException(errorMessages.cart.notFound);
     }
 
-    async getUserCart(user: User): Promise<ShoppingCart> {
+    await this.entityManager
+      .createQueryBuilder()
+      .delete()
+      .from(ShoppingCartItem)
+      .where("id = :cartId", { cartId: cartItemId })
+      .execute();
 
-        const cart = await this.entityManager
-            .createQueryBuilder(ShoppingCart, 'cart')
-            .leftJoinAndSelect('cart.user', 'user')
-            .leftJoinAndSelect('cart.items', 'items')
-            .leftJoinAndSelect('items.productItem', 'productItem')
-            .leftJoinAndSelect('productItem.product', 'product')
-            .where('user.id = :userId', { userId: user.id })
-            .getOne();
+    cartItem.productItem.qty_in_stock += cartItem.qty;
+    await this.productItemRepository.save(cartItem.productItem);
 
-        if (!cart) throw new NotFoundException(errorMessages.cart.notFound);
+    return successObject;
+  }
 
-        return cart;
+  public async clearCart(user: User) {
+    const cart = await this.cartRepository.findOne({ where: { user } });
+    if (!cart) {
+      throw new NotFoundException(
+        `Shopping cart not found for user with ID ${user.id}`
+      );
     }
 
-    async deleteCart(cartItemId: number) {
+    await this.entityManager
+      .createQueryBuilder()
+      .delete()
+      .from(ShoppingCartItem)
+      .where("cartId = :cartId", { cartId: cart.id })
+      .execute();
 
-        const cartItem = await this.entityManager
-            .createQueryBuilder(ShoppingCartItem, 'cart_item')
-            .leftJoinAndSelect('cart_item.productItem', 'product')
-            .where('cart_item.id = :cartId', { cartId: cartItemId })
-            .getOne();
+    return successObject;
+  }
 
-        if (!cartItem) {
-            throw new NotFoundException(errorMessages.cart.notFound);
-        }
-
-        await this.entityManager
-            .createQueryBuilder()
-            .delete()
-            .from(ShoppingCartItem)
-            .where('id = :cartId', { cartId: cartItemId })
-            .execute();
-
-        cartItem.productItem.qty_in_stock += cartItem.qty;
-        await this.productItemRepository.save(cartItem.productItem);
-
-        return successObject;
+  public async deleteProductFromCart(cartItemId: number) {
+    // Find the existing cart item
+    const cartItemFound = await this.cartItemRepository.findOne({
+      where: { id: cartItemId },
+      relations: ["productItem"],
+    });
+    if (!cartItemFound) {
+      throw new NotFoundException(`Cart item with ID not found`);
     }
 
-    public async removeProductFromCart(cartItemId: number) {
-        // Find the existing cart item
-        const cartItemFound = await this.cartItemRepository.findOne({ where: { id: cartItemId }, relations: ['productItem'] });
-        if (!cartItemFound) {
-            throw new NotFoundException(`Cart item with ID not found`);
-        }
+    const cartItemRemoved = await this.cartItemRepository.remove(cartItemFound);
+    return cartItemRemoved;
+  }
 
-        cartItemFound.qty--;
-
-        await this.cartItemRepository.save(cartItemFound);
-
-        return cartItemFound;
+  public async removeProductFromCart(cartItemId: number) {
+    // Find the existing cart item
+    const cartItemFound = await this.cartItemRepository.findOne({
+      where: { id: cartItemId },
+      relations: ["productItem"],
+    });
+    if (!cartItemFound) {
+      throw new NotFoundException(`Cart item with ID not found`);
     }
 
-    public async addProductToCart(user: User, productId: number, qty: number = 1): Promise<ShoppingCartItem> {
-        // Find the shopping cart by user
-        const cart = await this.cartRepository.findOne({ where: { user } });
-        if (!cart) {
-            throw new NotFoundException(`Shopping cart not found for user with ID ${user.id}`);
-        }
+    cartItemFound.qty--;
 
-        // Find the product by ID
-        const product = await this.productItemRepository.findOne({ where: { id: productId } });
-        if (!product) {
-            throw new NotFoundException(`Product with ID ${productId} not found`);
-        }
-
-        // Find the existing cart item
-        const cartItemFound = await this.cartItemRepository.findOne({ where: { cart, productItem: product } });
-
-        console.log(cartItemFound);
-
-        if (!cartItemFound) {
-            // Create a new cart item if it doesn't exist
-            const cartItem = this.cartItemRepository.create({
-                productItem: product,
-                cart: cart,
-                qty: qty,
-            });
-
-            // Save the new cart item
-            await this.cartItemRepository.save(cartItem);
-
-            return cartItem;
-        } else {
-            // Update the existing cart item quantity and product stock quantity
-            cartItemFound.qty += qty;
-            await this.productItemRepository.save(product);
-            await this.cartItemRepository.save(cartItemFound);
-
-            return cartItemFound;
-        }
+    if (cartItemFound.qty == 0) {
+      const cartItemRemoved = await this.cartItemRepository.remove(
+        cartItemFound
+      );
+      return cartItemRemoved;
     }
+
+    await this.cartItemRepository.save(cartItemFound);
+
+    return cartItemFound;
+  }
+
+  public async createCart(user: User): Promise<ShoppingCart> {
+    const cart: ShoppingCart = this.cartRepository.create({ user });
+    await this.cartRepository.save(cart);
+    return cart;
+  }
+
+  public async addProductToCart(
+    user: User,
+    productId: number,
+    qty: number = 1
+  ): Promise<ShoppingCartItem> {
+    // Find the shopping cart by user
+    const cart = await this.cartRepository.findOne({ where: { user } });
+    if (!cart) {
+      throw new NotFoundException(
+        `Shopping cart not found for user with ID ${user.id}`
+      );
+    }
+
+    // Find the product by ID
+    const product = await this.productItemRepository.findOne({
+      where: { id: productId },
+    });
+    if (!product) {
+      throw new NotFoundException(`Product with ID ${productId} not found`);
+    }
+
+    // Find the existing cart item
+    const cartItemFound = await this.cartItemRepository.findOne({
+      where: { cart, productItem: product },
+    });
+
+    if (!cartItemFound) {
+      // Create a new cart item if it doesn't exist
+      const cartItem = this.cartItemRepository.create({
+        productItem: product,
+        cart: cart,
+        qty: qty,
+      });
+
+      // Save the new cart item
+      await this.cartItemRepository.save(cartItem);
+
+      return cartItem;
+    } else {
+      // Update the existing cart item quantity and product stock quantity
+      cartItemFound.qty += qty;
+      await this.productItemRepository.save(product);
+      await this.cartItemRepository.save(cartItemFound);
+
+      return cartItemFound;
+    }
+  }
 }

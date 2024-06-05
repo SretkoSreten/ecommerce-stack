@@ -14,3 +14,16 @@ export interface ProductDto {
 export interface NewArrivalsProps {
   products: ProductDto[];
 }
+
+export interface ProductInfoProps {
+  product: {
+    name: string;
+    description: string;
+    category: {
+      category_name: string;
+    };
+  };
+  id: number;
+  SKU: string;
+  price: number;
+}

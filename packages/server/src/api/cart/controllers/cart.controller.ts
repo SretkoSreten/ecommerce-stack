@@ -19,6 +19,25 @@ export class CartController {
         return this.cartService.getUserCart(user);
     }
 
+    
+    @Auth(Roles.USER, Roles.ADMIN)
+    @Get('user/items')
+    getUserCartItems(
+        @CurrentUser() user: User
+    ) {
+        return this.cartService.getUserCartItems(user);
+    }
+
+    @Auth(Roles.ADMIN, Roles.USER)
+    @Delete('clear')
+    clearCart(
+        @CurrentUser() user: User
+    ) {
+        return this.cartService.clearCart(user);
+    }
+
+
+
     @Auth(Roles.USER, Roles.ADMIN)
     @Get(':id')
     getCart(
@@ -34,6 +53,15 @@ export class CartController {
     ) {
         return this.cartService.deleteCart(id);
     }
+
+    @Auth(Roles.ADMIN, Roles.USER)
+    @Delete('item/:id')
+    deleteCartItem(
+        @Param() {id}: FindOneParams,
+    ) {
+        return this.cartService.deleteProductFromCart(id);
+    }
+
 
     @Auth(Roles.ADMIN, Roles.USER)
     @Post('add/:id')

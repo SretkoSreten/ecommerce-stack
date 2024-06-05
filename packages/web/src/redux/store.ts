@@ -14,10 +14,14 @@ import authReducer from "../reducers/auth.reducer";
 import { persistConfig } from "./persist.config";
 import homeReducer from "../reducers/home.reducer";
 import layoutReducer from "../reducers/layout.reducer";
+import productReducer from "../reducers/product.reducer";
+import cartReducer from "../reducers/cart.reducer";
 
 const rootReducer = {
   home: homeReducer,
   layout: layoutReducer,
+  product: productReducer,
+  cart: cartReducer,
   auth: persistReducer(persistConfig, authReducer),
 };
 

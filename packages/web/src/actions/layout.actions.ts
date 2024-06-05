@@ -1,44 +1,77 @@
 import axios from "axios";
 import {
-  GET_HEADER_REQUEST,
-  GET_HEADER_FAILURE,
-  GET_HEADER_SUCCESS,
+  CLEAR_SEARCH_ITEMS,
+  GET_LAYOUT_FAILURE,
+  GET_LAYOUT_REQUEST,
+  GET_LAYOUT_SUCCESS,
+  GET_SEARCH_REQUEST,
+  GET_SEARCH_SUCCESS,
 } from "../constants/actions.constants";
+import { Dispatch } from "redux";
 
 // Define action creators
 export const getLayoutRequest = () => ({
-  type: GET_HEADER_REQUEST,
+  type: GET_LAYOUT_REQUEST,
 });
 
 export const getLayoutSuccess = (data: any) => ({
-  type: GET_HEADER_SUCCESS,
+  type: GET_LAYOUT_SUCCESS,
   payload: data,
 });
 
 export const getLayoutFailure = (error: string) => ({
-  type: GET_HEADER_FAILURE,
+  type: GET_LAYOUT_FAILURE,
   payload: error,
 });
 
-// Async action creator to fetch categories
+export const getSearchRequest = () => ({
+  type: GET_SEARCH_REQUEST
+});
+
+export const getSearchSuccess = (products: any[]) => ({
+  type: GET_SEARCH_SUCCESS,
+  payload: products,
+});
+
+export const clearSearch = () => ({
+  type: CLEAR_SEARCH_ITEMS
+})
+
+
+export const searchProducts = (name: string) => {
+  return async (dispatch: Dispatch) => {
+    try {
+      const { data } = await axios.post("/api/products/search", { name });
+      dispatch(getSearchSuccess(data.data));
+    } catch (error) {}
+  };
+};
+
 export const fetchLayout = () => {
-  return async (dispatch: any) => {
+  return async (dispatch: Dispatch) => {
     dispatch(getLayoutRequest());
 
     try {
       const token = localStorage.getItem("token");
-      // Axios get request to fetch categories
-      const { data: response_category } = await axios.get("/api/categories");
-      const categories = response_category.data;
 
-      const { data: response_auth } = await axios.post("/api/auth/verify-token", { token });
-      const auth = response_auth.data;
+      const [categoryResponse, authResponse, cartResponse] = await Promise.all([
+        axios.get("/api/categories"),
+        token
+          ? axios.post("/api/auth/verify-token", { token })
+          : Promise.resolve({ data: null }),
+        token
+          ? axios.get("/api/carts/user/items", {
+              headers: { Authorization: `Bearer ${token}` },
+            })
+          : Promise.resolve({ data: null }),
+      ]);
 
-      const data = {auth, categories};
+      const categories = categoryResponse.data.data;
+      const auth = authResponse.data;
+      const cart = cartResponse.data;
+
+      const data = { auth, categories, cart };
       dispatch(getLayoutSuccess(data));
-      
-    } catch (error:any) {
-      dispatch(getLayoutFailure(error.message));
-    }
+    } catch (error) {}
   };
 };
