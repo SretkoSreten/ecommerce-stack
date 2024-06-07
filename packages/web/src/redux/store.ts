@@ -16,6 +16,7 @@ import homeReducer from "../reducers/home.reducer";
 import layoutReducer from "../reducers/layout.reducer";
 import productReducer from "../reducers/product.reducer";
 import cartReducer from "../reducers/cart.reducer";
+import shopReducer from "../reducers/shop.reducer";
 
 const rootReducer = {
   home: homeReducer,
@@ -23,6 +24,7 @@ const rootReducer = {
   product: productReducer,
   cart: cartReducer,
   auth: persistReducer(persistConfig, authReducer),
+  shop: shopReducer
 };
 
 export const store = configureStore({

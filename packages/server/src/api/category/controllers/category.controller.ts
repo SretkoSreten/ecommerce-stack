@@ -15,6 +15,11 @@ export class CategoryController {
         return this.categoryService.getCategories();
     }
 
+    @Get('/shop')
+    getShopCategories() {
+        return this.categoryService.getShopCategories();
+    }
+
     @Auth(Roles.ADMIN)
     @Post('create')
     createCategory(@Body() body: CreateCategoryDto) {

@@ -1,9 +1,4 @@
-import {
-  BrowserRouter,
-  Outlet,
-  Route,
-  Routes
-} from "react-router-dom";
+import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import LoginConnector from "./modules/login";
 import RegisterConnector from "./modules/register";
 import { AuthProvider } from "./modules/auth/AuthProvider";
@@ -18,6 +13,7 @@ import SpecialCase from "./components/scroll";
 import { LogoutConnector } from "./modules/logout";
 import ProductConnector from "./modules/product";
 import CartConnector from "./modules/cart";
+import ShopConnector from "./modules/shop";
 
 const Layout = () => {
   return (
@@ -43,6 +39,7 @@ function App() {
               <Route path="/logout" element={<LogoutConnector />} />
               <Route path="/cart" element={<CartConnector />} />
             </Route>
+            <Route path="/shop" element={<ShopConnector />} />
             <Route path="/product/:id" element={<ProductConnector />} />
             <Route path="/login" element={<LoginConnector />} />
             <Route path="/register" element={<RegisterConnector />} />

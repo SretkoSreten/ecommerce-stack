@@ -29,11 +29,11 @@ const ProductDetails: React.FC = () => {
     <div className="w-full mx-auto border-b-[1px] border-b-gray-300">
       {!loading && (
         <div className="mx-auto px-10">
-          <div className="py-4">
-            <Breadcrumbs title="" prevLocation={prevLocation} />
+          <div>
+            <Breadcrumbs title="Product" prevLocation={prevLocation} />
           </div>
-          <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-4 h-full pb-10 bg-gray-100 p-4">
-            <div className="h-full">
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-4 h-full pb-10 bg-gray-100">
+            <div className="h-full p-4">
               <ProductsOnSale products={sale} />
             </div>
             <div className="h-full xl:col-span-2">

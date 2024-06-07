@@ -31,6 +31,18 @@ export class VariationService {
         });
     }
 
+    async getVariationsCategory(data):Promise<Variation[]>{
+        console.log(data);
+        const categoryName = data.category ? data.category : null;
+        if (categoryName){
+            const category:Category = await this.categoryRepository.findOne({where: {category_name: categoryName}});
+            const variations:Variation[] = await this.variationRepository.find({where: {category}, relations: ['options']});
+            return variations;
+        }
+
+        return this.variationRepository.find({relations: ['options']});
+    }
+
     async createVariation({ category, name }: CreateVariationDto): Promise<Variation> {
         // Find the category by name
         const categoryFound: Category = await this.categoryRepository.findOneBy({ category_name: category });

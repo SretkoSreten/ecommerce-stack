@@ -1,5 +1,3 @@
-import spfOne from "../assets/images/bestSellerOne.webp";
-
 // =================== NavBarList Start here ====================
 export const navBarList = [
   {
@@ -16,36 +14,38 @@ export const navBarList = [
     _id: 1003,
     title: "About",
     link: "/about",
-  }
-];
-// =================== NavBarList End here ======================
-// =================== Special Offer data Start here ============
-export const SplOfferData = [
-  {
-    _id: "201",
-    img: spfOne,
-    productName: "Cap for Boys",
-    price: "35.00",
-    color: "Blank and White",
-    badge: true,
-    des:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic excepturi quibusdam odio deleniti reprehenderit facilis.",
   },
 ];
-// =================== Special Offer data End here ==============
 
-// =================== PaginationItems Start here ===============
-
-export const paginationItems = [
+export const priceList = [
   {
-    _id: 1001,
-    img: spfOne,
-    productName: "Cap for Boys",
-    price: 35,
-    color: "Blank and White",
-    badge: true,
-    des:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic excepturi quibusdam odio deleniti reprehenderit facilis.",
+    _id: 950,
+    min: 0.0,
+    max: 49.99,
+  },
+  {
+    _id: 951,
+    min: 50.0,
+    max: 99.99,
+  },
+  {
+    _id: 952,
+    min: 100.0,
+    max: 199.99,
+  },
+  {
+    _id: 953,
+    min: 200.0,
+    max: 399.99,
+  },
+  {
+    _id: 954,
+    min: 400.0,
+    max: 599.99,
+  },
+  {
+    _id: 955,
+    min: 600.0,
+    max: 1000.0,
   },
 ];
-// =================== PaginationItems End here =================

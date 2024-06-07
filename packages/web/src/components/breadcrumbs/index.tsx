@@ -18,12 +18,12 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ prevLocation, title }) => {
   
 
   return (
-    <div className="w-full flex flex-col">
+    <div className="w-full py-6 flex flex-col">
       <h1 className="text-5xl text-primeColor font-titleFont font-bold">
         {title}
       </h1>
       <p className="text-sm font-normal text-lightText capitalize flex items-center">
-        <span>{prevLocation === "" ? "Home" : prevLocation}</span>
+        {/* <span>{prevLocation === "" ? "Home" : prevLocation}</span> */}
         <span className="px-1">
           <HiOutlineChevronRight />
         </span>

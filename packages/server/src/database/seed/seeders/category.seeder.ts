@@ -23,7 +23,7 @@ export class CategorySeederSeeder {
     const count: number = await this.categoryRepository.count();
     const CATEGORY_COUNT: number = 5;
     const GENERATE_COUNT = CATEGORY_COUNT - count;
-    await this.seedCategories(GENERATE_COUNT, GENERATE_COUNT);
+    await this.seedCategories(GENERATE_COUNT, 2);
   }
 
   async seedCategories(numCategories: number, numSubcategories: number) {
