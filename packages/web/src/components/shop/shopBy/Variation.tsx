@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import NavTitle from './NavTitle'; // Adjust the import according to your project structure
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import NavTitle from "./NavTitle"; // Adjust the import according to your project structure
+import { motion } from "framer-motion";
+import { useDispatch } from "react-redux";
+import { fetchProducts } from "../../../actions/shop.actions";
 
 interface VariationProps {
   options: { id: number; value: string }[];
@@ -9,51 +11,51 @@ interface VariationProps {
 }
 
 const Variation: React.FC<VariationProps> = ({ options, name }) => {
+  const dispatch = useDispatch();
   const [showOptions, setShowOptions] = useState(true);
-  const [variations, setVariations] = useState<{ id: number; value: string; checked: boolean }[]>([]);
+  const [variations, setVariations] = useState<string[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     if (!options) return;
 
-    // Initialize variations with checked property
-    const initialVariations = options.map(option => ({
-      ...option,
-      checked: false,
-    }));
-
-    // Parse selected variations from search params
-    const selectedVariations = searchParams.get(name);
+    const selectedVariations = searchParams.get("variations");
     if (selectedVariations) {
       const parsedVariations = JSON.parse(selectedVariations);
-      const updatedVariations = initialVariations.map(variation => ({
-        ...variation,
-        checked: parsedVariations.includes(variation.value),
-      }));
-      setVariations(updatedVariations);
-    } else {
-      setVariations(initialVariations);
+      setVariations(parsedVariations);
     }
-  }, [options, searchParams, name]);
+  }, [options, searchParams]);
 
   const handleVariationChange = (value: string) => {
-    const updatedVariations = variations.map(variation =>
-      variation.value === value ? { ...variation, checked: !variation.checked } : variation
-    );
-    setVariations(updatedVariations);
+    const updatedOptions = [...variations];
+    const index = updatedOptions.indexOf(value);
 
-    const selectedVariationValues = updatedVariations
-      .filter(variation => variation.checked)
-      .map(variation => variation.value);
+    if (index !== -1) {
+      updatedOptions.splice(index, 1);
+    } else {
+      updatedOptions.push(value);
+    }
 
-    const newSearchParams = new URLSearchParams(searchParams.toString());
-    newSearchParams.set(name, JSON.stringify(selectedVariationValues));
-    setSearchParams(newSearchParams);
+    setVariations(updatedOptions);
+
+    const existingParams = Object.fromEntries(searchParams.entries());
+    existingParams["variations"] = JSON.stringify(updatedOptions);
+    existingParams["page"] = "0";
+    setSearchParams(existingParams);
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+    dispatch<any>(fetchProducts());
   };
 
   return (
     <div>
-      <div onClick={() => setShowOptions(!showOptions)} className="cursor-pointer">
+      <div
+        onClick={() => setShowOptions(!showOptions)}
+        className="cursor-pointer"
+      >
         <NavTitle title={name} icons={true} />
       </div>
       {showOptions && (
@@ -63,7 +65,7 @@ const Variation: React.FC<VariationProps> = ({ options, name }) => {
           transition={{ duration: 0.5 }}
         >
           <ul className="flex flex-col gap-4 text-sm lg:text-base text-[#767676]">
-            {variations.map(({ id, value, checked }) => (
+            {options.map(({ id, value }) => (
               <li
                 key={id}
                 className="border-b-[1px] border-b-[#F0F0F0] pb-2 flex items-center gap-2"
@@ -71,7 +73,7 @@ const Variation: React.FC<VariationProps> = ({ options, name }) => {
                 <input
                   id={`variation-checkbox-${id}`}
                   type="checkbox"
-                  checked={checked}
+                  checked={variations.includes(value)}
                   onChange={() => handleVariationChange(value)}
                   className="w-4 h-4 border-gray-300 rounded bg-gray-700"
                 />

@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import NavTitle from './NavTitle'; // Adjust the import according to your project structure
-import { ImMinus, ImPlus } from 'react-icons/im';
-
-interface CategoryProps {
-  categories: { id: number; category_name: string; subcategories?: { id: number; category_name: string }[] }[];
-}
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import NavTitle from "./NavTitle"; // Adjust the import according to your project structure
+import { ImMinus, ImPlus } from "react-icons/im";
+import { CategoryProps } from "../dto/category.dto";
+import { useDispatch } from "react-redux";
+import { fetchProducts, fetchSideNav } from "../../../actions/shop.actions";
 
 const Category: React.FC<CategoryProps> = ({ categories }) => {
+  const dispatch = useDispatch();
+
   const [categoriesProps, setCategoriesProps] = useState<any[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const [showSubCat, setShowSubCat] = useState<{ [key: number]: boolean }>({});
@@ -67,7 +68,7 @@ const Category: React.FC<CategoryProps> = ({ categories }) => {
         updatedCategories.subcategories[
           parentName
         ] = updatedCategories.subcategories[parentName].filter(
-          (subcategory:any) => subcategory !== name
+          (subcategory: any) => subcategory !== name
         );
       } else {
         updatedCategories.subcategories[parentName].push(name);
@@ -79,7 +80,7 @@ const Category: React.FC<CategoryProps> = ({ categories }) => {
       // Handle category
       if (updatedCategories.categories.includes(name)) {
         updatedCategories.categories = updatedCategories.categories.filter(
-          (category:any) => category !== name
+          (category: any) => category !== name
         );
         if (updatedCategories.subcategories[name]) {
           delete updatedCategories.subcategories[name];
@@ -96,7 +97,11 @@ const Category: React.FC<CategoryProps> = ({ categories }) => {
 
     // Include existing query parameters along with updated categories
     const existingParams = Object.fromEntries(searchParams.entries());
-    const newParams = { ...existingParams, categories: JSON.stringify(updatedCategories) };
+    const newParams = {
+      ...existingParams,
+      categories: JSON.stringify(updatedCategories),
+      page: "0"
+    };
     setSearchParams(newParams);
 
     const updatedCategoriesProps = categoriesProps.map((category) => {
@@ -121,6 +126,13 @@ const Category: React.FC<CategoryProps> = ({ categories }) => {
       return category;
     });
     setCategoriesProps(updatedCategoriesProps);
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+    dispatch<any>(fetchProducts());
+    dispatch<any>(fetchSideNav());
+
   };
 
   return (

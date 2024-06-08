@@ -15,9 +15,7 @@ const ShopSideNav = () => {
   }, []);
 
   if (!data) return;
-
-  //   console.log(data);
-
+  
   return (
     <div className="w-full">
       {!loading && (

@@ -55,7 +55,7 @@ export const fetchLayout = () => {
       const token = localStorage.getItem("token");
 
       const [categoryResponse, authResponse, cartResponse] = await Promise.all([
-        axios.get("/api/categories"),
+        axios.get("/api/categories/shop"),
         token
           ? axios.post("/api/auth/verify-token", { token })
           : Promise.resolve({ data: null }),

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Query } from "@nestjs/common";
 import { Auth } from "src/api/auth/guards/auth.decorator";
 import { FindOneParams } from "src/common/helper/findOneParams.dto";
 import { Roles } from "src/api/role/role.enum";
@@ -13,15 +13,14 @@ import {
 export class VariationController {
   constructor(private readonly variationService: VariationService) {}
 
+  @Get("shop")
+  async getVariationsCategory(@Query() query: any) {
+    return this.variationService.getVariationsCategory(query);
+  }
 
   @Get(":id")
   async getVariation(@Param() variation: FindOneParams) {
     return this.variationService.getVariation(variation.id);
-  }
-
-  @Get("shop/:category")
-  async getVariationsCategory(@Param() params: any) {
-    return this.variationService.getVariationsCategory(params);
   }
 
   @Auth(Roles.ADMIN)
@@ -47,4 +46,6 @@ export class VariationController {
   async deleteVariation(@Param() variation: FindOneParams) {
     return this.variationService.deleteVariation(variation);
   }
+
+
 }

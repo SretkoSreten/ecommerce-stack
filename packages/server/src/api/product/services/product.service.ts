@@ -15,6 +15,10 @@ import { GetProductsDto } from "../dto/get-products.dto";
 import { Variation } from "src/database/entities/variation/variation.entity";
 import { VariationOption } from "src/database/entities/variation/variation_option.entity";
 import { UpdateProductDto } from "../dto/update-product.dto";
+import { convertQueryParamsToObject } from "src/common/helper/convertQueryParams";
+import { findMinMax } from "src/common/helper/findMinMax";
+import { collectCategories } from "src/common/helper/listCategories";
+import { calculateTotalPages } from "src/common/helper/calcPage";
 
 @Injectable()
 export class ProductService {
@@ -184,23 +188,20 @@ export class ProductService {
 
     return products;
   }
-  async getProducts(requirements: GetProductsDto): Promise<any> {
-    const {
-      minPrice,
-      maxPrice,
-      page,
-      pageSize,
-      options,
-      category,
-      sort,
-    } = requirements;
 
-    const decodedOptions = options
-      ? JSON.parse(decodeURIComponent(options))
-      : [];
+  async getProducts(requirements: any): Promise<any> {
+    const query: any = {};
+    const params: any = convertQueryParamsToObject(requirements);
 
-    const PAGE_SIZE = pageSize ? pageSize : 5;
-    const PAGE = page ? page : 1;
+    if (params.prices) {
+      const { prices } = params;
+      const { globalMin, globalMax } = findMinMax(prices);
+      query.minPrice = globalMin;
+      query.maxPrice = globalMax;
+    }
+
+    const PAGE_SIZE = params.pageSizes ? params.pageSizes : 12;
+    const PAGE = params.page ? params.page : 0;
 
     const queryBuilder = this.entityManager
       .createQueryBuilder(ProductItem, "product_items")
@@ -209,45 +210,49 @@ export class ProductService {
       .leftJoinAndSelect("product_items.variations", "variationsOption")
       .leftJoinAndSelect("variationsOption.variation", "variations");
 
-    // Define the conditions array
     const conditions: { condition: string; parameters: any }[] = [];
 
-    minPrice &&
+    query.minPrice &&
       conditions.push({
         condition: "product_items.price >= :minPrice",
-        parameters: { minPrice },
+        parameters: { minPrice: query.minPrice },
       });
-    maxPrice &&
+    query.maxPrice &&
       conditions.push({
         condition: "product_items.price <= :maxPrice",
-        parameters: { maxPrice },
+        parameters: { maxPrice: query.maxPrice },
       });
-    category &&
+
+    const listCategories = collectCategories(params.categories);
+
+
+    if (Array.isArray(listCategories) && listCategories.length > 0) {
       conditions.push({
-        condition: "category.category_name = :category",
-        parameters: { category },
+        condition: "category.category_name IN (:...listCategories)",
+        parameters: { listCategories },
       });
-
-    for (const option of decodedOptions) {
-      const variationName = option.name;
-      const variationValues = option.variations;
-      // Get variation by name
-      const variation = await this.variationRepository.findOneBy({
-        name: variationName,
-      });
-      if (!variation) continue;
-
-      queryBuilder.andWhere(
-        "variations.name = :variationName AND variationsOption.value IN (:...variationValues)",
-        { variationName, variationValues }
-      );
     }
 
-    if (sort) {
-      const validSortFields = ["name", "price"]; // Add other valid fields as needed
-      if (validSortFields.includes(sort)) {
-        queryBuilder.orderBy(`product_items.${sort}`, "ASC");
+    if (Array.isArray(params.variations) && params.variations.length > 0) {
+      conditions.push({
+        condition: "variationsOption.value IN (:...variations)",
+        parameters: { variations: params.variations },
+      });
+    }
+
+    if (params.sort) {
+      let orderByField: string;
+      switch (params.sort) {
+        case "name":
+          orderByField = "product.name";
+          break;
+        case "price":
+          orderByField = "product_items.price"; // Adjust the field name if needed
+          break;
+        default:
+          orderByField = "product.id"; // Default sorting by product ID
       }
+      queryBuilder.orderBy(orderByField, "ASC");
     }
 
     // Apply the conditions to the query builder
@@ -255,18 +260,19 @@ export class ProductService {
       queryBuilder.andWhere(condition, parameters);
     });
 
-    queryBuilder.offset((PAGE - 1) * PAGE_SIZE);
-    queryBuilder.limit(PAGE_SIZE);
+    queryBuilder.skip(PAGE * PAGE_SIZE);
+    queryBuilder.take(PAGE_SIZE);
 
     const count = await queryBuilder.getCount();
     const data = await queryBuilder.getMany();
+
+    const pageCount = calculateTotalPages(count, PAGE_SIZE);
 
     return {
       products: [...data],
       pagination: {
         count,
-        pageSize,
-        page,
+        pageCount,
       },
     };
   }

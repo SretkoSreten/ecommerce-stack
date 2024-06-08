@@ -9,3 +9,11 @@ export interface Category {
   category_name: string;
   subcategories?: SubCategory[];
 }
+
+export interface CategoryProps {
+  categories: {
+    id: number;
+    category_name: string;
+    subcategories?: { id: number; category_name: string }[];
+  }[];
+}

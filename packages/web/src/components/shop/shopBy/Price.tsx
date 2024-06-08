@@ -1,13 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import NavTitle from './NavTitle'; // Adjust the import according to your project structure
+import { useDispatch } from 'react-redux';
+import { fetchProducts } from '../../../actions/shop.actions';
 
 interface PriceProps {
   priceList: { _id: number; min: number; max: number }[];
 }
 
+interface Price {
+  _id: number;
+  min: number;
+  max: number;
+  checked: boolean;
+}
+
 const Price: React.FC<PriceProps> = ({ priceList }) => {
-  const [prices, setPrices] = useState<{ _id: number; min: number; max: number; checked: boolean }[]>([]);
+
+  const dispatch = useDispatch();
+  const [prices, setPrices] = useState<Price[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
@@ -22,10 +33,10 @@ const Price: React.FC<PriceProps> = ({ priceList }) => {
     // Parse selected prices from search params
     const selectedPrices = searchParams.get('prices');
     if (selectedPrices) {
-      const parsedPrices = JSON.parse(selectedPrices);
+      const parsedPrices: { _id: number }[] = JSON.parse(selectedPrices);
       const updatedPrices = initialPrices.map(price => ({
         ...price,
-        checked: parsedPrices.includes(price._id),
+        checked: parsedPrices.some(p => p._id === price._id),
       }));
       setPrices(updatedPrices);
     } else {
@@ -39,13 +50,19 @@ const Price: React.FC<PriceProps> = ({ priceList }) => {
     );
     setPrices(updatedPrices);
 
-    const selectedPriceIds = updatedPrices
+    const selectedPriceObjects = updatedPrices
       .filter(price => price.checked)
-      .map(price => price._id);
+      .map(price => ({ _id: price._id, min: price.min, max: price.max }));
 
     const newSearchParams = new URLSearchParams(searchParams.toString());
-    newSearchParams.set('prices', JSON.stringify(selectedPriceIds));
+    newSearchParams.set('prices', JSON.stringify(selectedPriceObjects));
     setSearchParams(newSearchParams);
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+    dispatch<any>(fetchProducts());
   };
 
   return (

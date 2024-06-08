@@ -1,6 +1,7 @@
 import { Dispatch } from "redux";
 import {
   GET_SHOP_FAILURE,
+  GET_SHOP_PRODUCTS_SUCCESS,
   GET_SHOP_REQUEST,
   GET_SHOP_SUCCESS,
 } from "../constants/actions.constants";
@@ -15,25 +16,39 @@ export const getShopSuccess = (data: any) => ({
   payload: data,
 });
 
+export const getShopProductsSuccess = (data: any) => ({
+  type: GET_SHOP_PRODUCTS_SUCCESS,
+  payload: data,
+});
+
 export const getShopFailure = (error: string) => ({
   type: GET_SHOP_FAILURE,
   payload: error,
 });
 
+export const fetchProducts = () => {
+  return async (dispatch: Dispatch) => {
+    try {
+      const [productResponse] = await Promise.all([
+        axios.get(`/api/products/${window.location.search}`),
+      ]);
+      const { data } = productResponse.data;
+      dispatch(getShopProductsSuccess(data));
+    } catch (error) {}
+  };
+};
+
 export const fetchSideNav = () => {
   return async (dispatch: Dispatch) => {
-    dispatch(getShopRequest());
-
     try {
       const token = localStorage.getItem("token");
-
-      const query = new URLSearchParams(window.location.search);
-
-      const c = query.get('category')
-
-      const [categoryResponse, variationResponse, authResponse] = await Promise.all([
+      const [
+        categoryResponse,
+        variationResponse,
+        authResponse,
+      ] = await Promise.all([
         axios.get("/api/categories/shop"),
-        axios.get(`/api/variations/shop/${c}`),
+        axios.get(`/api/variations/shop/${window.location.search}`),
         token
           ? axios.post("/api/auth/verify-token", { token })
           : Promise.resolve({ data: null }),
@@ -42,6 +57,8 @@ export const fetchSideNav = () => {
       const variations = variationResponse.data.data;
       const categories = categoryResponse.data.data;
       const auth = authResponse.data;
+
+      console.log(variations);
 
       const data = { auth, categories, variations };
       dispatch(getShopSuccess(data));

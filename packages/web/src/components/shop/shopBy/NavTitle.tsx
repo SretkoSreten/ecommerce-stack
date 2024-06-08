@@ -1,4 +1,3 @@
-import React from "react";
 import { BiCaretDown } from "react-icons/bi";
 
 const NavTitle = ({ title, icons }:any) => {

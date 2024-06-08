@@ -6,6 +6,7 @@ import { ProductSpecs } from "../../../components/product/ProductSpecs";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProduct } from "../../../actions/product.actions";
 import ProductsOnSale from "../../../components/product/ProductsOnSale";
+import { Loading } from "../../../components/loading";
 
 const ProductDetails: React.FC = () => {
   const { loading, data } = useSelector((state: any) => state.product);
@@ -27,18 +28,18 @@ const ProductDetails: React.FC = () => {
 
   return (
     <div className="w-full mx-auto border-b-[1px] border-b-gray-300">
-      {!loading && (
+      {loading ? (
+        <Loading/>
+      ) : (
         <div className="mx-auto px-10">
           <div>
             <Breadcrumbs title="Product" prevLocation={prevLocation} />
           </div>
-          <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-4 h-full pb-10 bg-gray-100">
-            <div className="h-full p-4">
-              <ProductsOnSale products={sale} />
-            </div>
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-4 h-full bg-gray-100">
+
             <div className="h-full xl:col-span-2">
               <img
-                className="w-full h-full object-cover"
+                className="h-full object-cover"
                 src={product.product_image}
               />
             </div>
@@ -46,7 +47,9 @@ const ProductDetails: React.FC = () => {
               <ProductInfo {...product} />
             </div>
           </div>
-          {product.variations.length && <ProductSpecs variations={product.variations} />}
+          {product.variations.length && (
+            <ProductSpecs variations={product.variations} />
+          )}
         </div>
       )}
     </div>

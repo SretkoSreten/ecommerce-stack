@@ -1,17 +1,19 @@
-import React, { useState, useRef, useEffect } from "react";
-import { motion } from "framer-motion";
-import { HiOutlineMenuAlt4 } from "react-icons/hi";
-import { FaSearch, FaUser, FaCaretDown, FaShoppingCart } from "react-icons/fa";
-import Flex from "../layout/Flex";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import {
-  clearSearch,
   fetchLayout,
+  clearSearch,
   searchProducts,
 } from "../../actions/layout.actions";
+import { HiOutlineMenuAlt4 } from "react-icons/hi";
+import { FaSearch, FaUser, FaCaretDown, FaShoppingCart } from "react-icons/fa";
+import { motion } from "framer-motion";
+import Flex from "../layout/Flex";
 
 const HeaderBottom: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const dispatch = useDispatch();
   const { loading, data, searchItems } = useSelector(
     (state: any) => state.layout
@@ -36,7 +38,7 @@ const HeaderBottom: React.FC = () => {
     };
   }, [ref]);
 
-  if (!data) return;
+  if (!data) return null;
 
   function subtractQuantities(cart: any) {
     let totalSum = 0;
@@ -51,11 +53,54 @@ const HeaderBottom: React.FC = () => {
     return navigate(`/product/${id}`);
   }
 
+  const handleCategory = (name: string, parentName: string | null = null) => {
+    let updatedCategories: any = { categories: [], subcategories: {} };
+
+    if (parentName) {
+      // Handle subcategory
+      if (!updatedCategories.subcategories[parentName]) {
+        updatedCategories.subcategories[parentName] = [];
+      }
+      if (updatedCategories.subcategories[parentName].includes(name)) {
+        updatedCategories.subcategories[
+          parentName
+        ] = updatedCategories.subcategories[parentName].filter(
+          (subcategory: any) => subcategory !== name
+        );
+      } else {
+        updatedCategories.subcategories[parentName].push(name);
+      }
+      if (updatedCategories.subcategories[parentName].length === 0) {
+        delete updatedCategories.subcategories[parentName];
+      }
+    } else {
+      // Handle category
+      if (updatedCategories.categories.includes(name)) {
+        updatedCategories.categories = updatedCategories.categories.filter(
+          (category: any) => category !== name
+        );
+        if (updatedCategories.subcategories[name]) {
+          delete updatedCategories.subcategories[name];
+        }
+      } else {
+        updatedCategories.categories.push(name);
+        const subcategoryNames =
+          data.categories
+            .find((cat: any) => cat.category_name === name)
+            ?.subcategories.map((sub: any) => sub.category_name) || [];
+        updatedCategories.subcategories[name] = subcategoryNames;
+      }
+    }
+    const newParams = {
+      categories: JSON.stringify(updatedCategories),
+    };
+    setSearchParams(newParams);
+  };
 
   return (
     <div className="w-full bg-[#F5F5F3] relative">
       {!loading && (
-        <div className="px-10 mx-auto">
+        <div className="max-w-container px-10 mx-auto">
           <Flex className="flex flex-col lg:flex-row items-start lg:items-center justify-between w-full pb-4 lg:pb-0 h-full lg:h-24">
             <div
               onClick={() => setShow(!show)}
@@ -77,6 +122,7 @@ const HeaderBottom: React.FC = () => {
                     data.categories.map(({ id, category_name }: any) => {
                       return (
                         <li
+                          onClick={() => handleCategory(category_name)}
                           key={id}
                           className="text-gray-400 px-4 py-1 border-b-[1px] border-b-gray-400 duration-300 cursor-pointer"
                         >
@@ -98,13 +144,13 @@ const HeaderBottom: React.FC = () => {
 
               {searchItems.length > 0 && (
                 <div
-                  className={`w-full mx-auto h-96 bg-white top-16 absolute left-0 z-50 shadow-2xl cursor-pointer`}
+                  className={`w-full mx-auto bg-white top-16 absolute left-0 z-50 shadow-2xl cursor-pointer`}
                 >
                   {searchItems.map((item: any) => (
                     <div
                       onClick={() => navigateToProduct(item.id)}
                       key={item.id}
-                      className="max-w-[600px] h-28 bg-gray-100 mb-3 flex items-center gap-3"
+                      className="max-w-[600px] h-28 bg-gray-100 flex items-center gap-3"
                     >
                       <img
                         className="w-24"
@@ -167,7 +213,7 @@ const HeaderBottom: React.FC = () => {
                   )}
                 </motion.ul>
               )}
-              {data.auth.data && (
+              {data.auth && data.auth.data && (
                 <Link to="/cart">
                   <div className="relative">
                     <FaShoppingCart />

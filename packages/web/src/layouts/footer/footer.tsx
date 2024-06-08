@@ -6,9 +6,11 @@ import paymentCard from "../../assets/images/payment.png";
 import Image from "../layout/Image";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchLayout } from "../../actions/layout.actions";
+import { useSearchParams } from "react-router-dom";
 
 const Footer = () => {
   const dispatch = useDispatch();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { loading, data } = useSelector((state: any) => state.layout);
 
   const [emailInfo, setEmailInfo] = useState("");
@@ -17,7 +19,7 @@ const Footer = () => {
 
   useEffect(() => {
     dispatch<any>(fetchLayout());
-  }, [])
+  }, []);
 
   const emailValidation = (email: string) => {
     return String(email)
@@ -35,6 +37,50 @@ const Footer = () => {
       setErrMsg("");
       setEmailInfo("");
     }
+  };
+
+  const handleCategory = (name: string, parentName: string | null = null) => {
+    let updatedCategories: any = { categories: [], subcategories: {} };
+
+    if (parentName) {
+      // Handle subcategory
+      if (!updatedCategories.subcategories[parentName]) {
+        updatedCategories.subcategories[parentName] = [];
+      }
+      if (updatedCategories.subcategories[parentName].includes(name)) {
+        updatedCategories.subcategories[
+          parentName
+        ] = updatedCategories.subcategories[parentName].filter(
+          (subcategory: any) => subcategory !== name
+        );
+      } else {
+        updatedCategories.subcategories[parentName].push(name);
+      }
+      if (updatedCategories.subcategories[parentName].length === 0) {
+        delete updatedCategories.subcategories[parentName];
+      }
+    } else {
+      // Handle category
+      if (updatedCategories.categories.includes(name)) {
+        updatedCategories.categories = updatedCategories.categories.filter(
+          (category: any) => category !== name
+        );
+        if (updatedCategories.subcategories[name]) {
+          delete updatedCategories.subcategories[name];
+        }
+      } else {
+        updatedCategories.categories.push(name);
+        const subcategoryNames =
+          data.categories
+            .find((cat: any) => cat.category_name === name)
+            ?.subcategories.map((sub: any) => sub.category_name) || [];
+        updatedCategories.subcategories[name] = subcategoryNames;
+      }
+    }
+    const newParams = {
+      categories: JSON.stringify(updatedCategories),
+    };
+    setSearchParams(newParams);
   };
 
   return (
@@ -97,6 +143,7 @@ const Footer = () => {
                   return (
                     <li
                       key={id}
+                      onClick={() => handleCategory(category_name)}
                       className="font-titleFont text-base text-lightText hover:text-black hover:underline decoration-[1px] decoration-gray-500 underline-offset-2 cursor-pointer duration-300"
                     >
                       {category_name}
