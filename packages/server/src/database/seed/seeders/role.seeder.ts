@@ -13,6 +13,11 @@ export class RolesSeeder implements SeederInterface {
   ) {}
 
   async seed() {
+    const roles = await this.rolesRepository.count();
+    const ROLE_COUNT = Object.keys(Roles).length;
+    const GENERATE_COUNT = ROLE_COUNT - roles;
+    if (GENERATE_COUNT == 0) return;
+
     const data: Partial<Role>[] = this.generateData();
     await this.rolesRepository.upsert(data, {
       conflictPaths: ['id'],

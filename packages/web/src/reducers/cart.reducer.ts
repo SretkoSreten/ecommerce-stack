@@ -6,11 +6,14 @@ import {
   GET_CART_REQUEST,
   GET_CART_SUCCESS,
   INCREASE_QUANTITY,
+  SET_COUPON_FAILURE,
+  SET_COUPON_SUCCESS,
 } from "../constants/actions.constants";
 
 const initialState = {
   loading: true,
-  items: [], // Array of items in the cart
+  data: {}, // Array of items in the cart
+  coupon: null,
 };
 
 // Reducer Function
@@ -19,9 +22,13 @@ const cartReducer = (state = initialState, action: any) => {
     case GET_CART_REQUEST:
       return { ...state };
     case GET_CART_SUCCESS:
-      return { ...state, loading: false, items: action.payload };
+      return { ...state, loading: false, data: action.payload };
+    case SET_COUPON_FAILURE:
+      return { ...state, error: action.payload };
+    case SET_COUPON_SUCCESS:
+      return { ...state, coupon: action.payload };
     case GET_CART_FAILURE:
-      return { ...state, loading: false, items: action.payload };
+      return { ...state, loading: false, data: action.payload };
     case ADD_TO_CART:
       return { ...state, items: action.payload };
 

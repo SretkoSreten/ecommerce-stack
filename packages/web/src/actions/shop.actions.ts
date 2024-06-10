@@ -57,9 +57,6 @@ export const fetchSideNav = () => {
       const variations = variationResponse.data.data;
       const categories = categoryResponse.data.data;
       const auth = authResponse.data;
-
-      console.log(variations);
-
       const data = { auth, categories, variations };
       dispatch(getShopSuccess(data));
     } catch (error) {}

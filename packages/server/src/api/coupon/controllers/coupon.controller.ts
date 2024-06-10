@@ -11,13 +11,13 @@ export class CouponController {
         private readonly couponService: CouponService
     ){}
 
-    @Auth(Roles.USER, Roles.ADMIN)
     @Get(':id')
     async getCoupon(
         @Param() params: any
     ){
         return this.couponService.getCoupon(params.id)
     }
+    
 
     @Auth(Roles.USER, Roles.ADMIN)
     @Post('create')

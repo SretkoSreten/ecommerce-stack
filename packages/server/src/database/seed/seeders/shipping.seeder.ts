@@ -12,34 +12,28 @@ export class ShippingMethodSeeder {
     private readonly entityManager: EntityManager,
   ) {}
 
-  private generateShippingMethodName(): string {
-    // Generate a random shipping method name
-    return faker.lorem.word();
+  private generateShippingData(): Partial<ShippingMethod>[] {
+    return [
+      { name: 'Fedex', price: 23 },
+      { name: 'Amazon Express', price: 10 },
+      { name: 'Ali Express', price: 10 },
+      { name: 'Alibaba', price: 0 },
+    ];
   }
-
-  private generateShippingMethodData(): Partial<ShippingMethod> {
-    // Generate shipping method data
-    return {
-      name: this.generateShippingMethodName(),
-      price: Math.random() * 500
-    };
-  }
-
 
   async seed(){
     const count: number = await this.shippingMethodRepository.count();
-    const SHIPPING_COUNT: number = 50;
+    const SHIPPING_COUNT: number = this.generateShippingData().length;
     const GENERATE_COUNT = SHIPPING_COUNT - count;
     await this.seedShippingMethods(GENERATE_COUNT);
   }
 
   async seedShippingMethods(numShippingMethods: number) {
+    const methods = this.generateShippingData();
     for (let i = 0; i < numShippingMethods; i++) {
-      const shippingMethodData = this.generateShippingMethodData();
-
       await this.entityManager.transaction(async (transactionalEntityManager) => {
         // Create new ShippingMethod entity
-        const newShippingMethod = transactionalEntityManager.create(ShippingMethod, shippingMethodData);
+        const newShippingMethod = transactionalEntityManager.create(ShippingMethod, methods[i]);
         await transactionalEntityManager.save(newShippingMethod);
       });
     }

@@ -34,7 +34,7 @@ export class UserPaymentMethodSeeder {
 
   async seed() {
     const count: number = await this.userPaymentMethodRepository.count();
-    const PAYMENT_COUNT: number = 10;
+    const PAYMENT_COUNT: number = 100;
     const GENERATE_COUNT = PAYMENT_COUNT - count;
 
     const users = await this.userRepository.find();

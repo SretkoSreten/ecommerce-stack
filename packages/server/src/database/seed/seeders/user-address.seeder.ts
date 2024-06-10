@@ -32,7 +32,7 @@ export class UserAddressSeeder {
     const users = await this.userRepository.find(); // Fetch existing users from DB
     const addresses = await this.addressRepository.find(); // Fetch existing addresses from DB
 
-    for (let i = 0; i < numUserAddresses; i++) {
+    for (let i = 0; i < 60; i++) {
       const data = await this.generateUserAddressData(users, addresses);
       await this.entityManager.save(UserAddress, data);
     }

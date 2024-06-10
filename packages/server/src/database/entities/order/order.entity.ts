@@ -19,7 +19,7 @@ export class ShopOrder {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   order_date: Date;
 
-  @ManyToOne(() => UserPaymentMethod, paymentType => paymentType.orders, { nullable: false })
+  @ManyToOne(() => UserPaymentMethod, paymentType => paymentType.orders, { nullable: true, onDelete: 'SET NULL' })
   payment_method: UserPaymentMethod;
 
   @ManyToOne(() => Address, { nullable: false })

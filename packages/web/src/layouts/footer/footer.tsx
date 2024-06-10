@@ -1,43 +1,21 @@
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect } from "react";
 import { FaFacebook, FaYoutube, FaLinkedin, FaGithub } from "react-icons/fa";
 import FooterListTitle from "./footerTitle";
 import paymentCard from "../../assets/images/payment.png";
 import Image from "../layout/Image";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchLayout } from "../../actions/layout.actions";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const Footer = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { loading, data } = useSelector((state: any) => state.layout);
-
-  const [emailInfo, setEmailInfo] = useState("");
-  const [subscription, setSubscription] = useState(false);
-  const [errMsg, setErrMsg] = useState("");
 
   useEffect(() => {
     dispatch<any>(fetchLayout());
   }, []);
-
-  const emailValidation = (email: string) => {
-    return String(email)
-      .toLocaleLowerCase()
-      .match(/^\w+([-]?\w+)*@\w+([-]?\w+)*(\.\w{2,3})+$/);
-  };
-
-  const handleSubscription = () => {
-    if (emailInfo === "") {
-      setErrMsg("Please provide an Email !");
-    } else if (!emailValidation(emailInfo)) {
-      setErrMsg("Please give a valid Email!");
-    } else {
-      setSubscription(true);
-      setErrMsg("");
-      setEmailInfo("");
-    }
-  };
 
   const handleCategory = (name: string, parentName: string | null = null) => {
     let updatedCategories: any = { categories: [], subcategories: {} };
@@ -81,6 +59,8 @@ const Footer = () => {
       categories: JSON.stringify(updatedCategories),
     };
     setSearchParams(newParams);
+
+    return navigate(`/shop/${window.location.search}`);
   };
 
   return (
@@ -173,52 +153,10 @@ const Footer = () => {
             </ul>
           </div>
           <div className="col-span-2 flex flex-col items-center w-full px-4">
-            <FooterListTitle title="Subscribe to our newsletter." />
-            <div className="w-full">
-              <p className="text-center mb-4">
-                A at pellentesque et mattis porta enim elementum.
-              </p>
-              {subscription ? (
-                <motion.p
-                  initial={{ x: 20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ duration: 0.5 }}
-                  className="w-full text-center text-base font-titleFont font-semibold text-green-600"
-                >
-                  Subscribed Successfully !
-                </motion.p>
-              ) : (
-                <div className="w-full flex-col xl:flex-row flex justify-between items-center gap-4">
-                  <div className="flex flex-col w-full">
-                    <input
-                      onChange={(e) => setEmailInfo(e.target.value)}
-                      value={emailInfo}
-                      className="w-full h-12 border-b border-gray-400 bg-transparent px-4 text-primeColor text-lg placeholder:text-base outline-none"
-                      type="text"
-                      placeholder="Insert your email ...*"
-                    />
-                    {errMsg && (
-                      <p className="text-red-600 text-sm font-semibold font-titleFont text-center animate-bounce mt-2">
-                        {errMsg}
-                      </p>
-                    )}
-                  </div>
-                  <button
-                    onClick={handleSubscription}
-                    className="bg-white text-lightText w-[30%] h-10 hover:bg-black hover:text-white duration-300 text-base tracking-wide"
-                  >
-                    Subscribe
-                  </button>
-                </div>
-              )}
-
-              <Image
-                className={`w-[80%] lg:w-[60%] mx-auto ${
-                  subscription ? "mt-2" : "mt-6"
-                }`}
-                imgSrc={paymentCard}
-              />
-            </div>
+            <Image
+              className={`w-[80%] lg:w-[60%] mx-auto`}
+              imgSrc={paymentCard}
+            />
           </div>
         </div>
       )}

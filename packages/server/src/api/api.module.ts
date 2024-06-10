@@ -12,6 +12,7 @@ import { PaymentModule } from "./payment/payment.module";
 import { CouponModule } from "./coupon/coupon.module";
 import { OrderModule } from "./order/order.module";
 import { ReviewModule } from "./reviews/review.module";
+import { ShippingModule } from "./shipping/shipping.module";
 
 @Module({
     imports: [
@@ -24,7 +25,8 @@ import { ReviewModule } from "./reviews/review.module";
         PaymentModule,
         CouponModule,
         OrderModule,
-        ReviewModule
+        ReviewModule,
+        ShippingModule
     ],
     providers: [
         {

@@ -19,12 +19,12 @@ export class PaymentService {
         private readonly entityManager: EntityManager,
     ) { }
 
-    async getUserPayment(user: User): Promise<UserPaymentMethod> {
-        const userPaymentMethod: UserPaymentMethod = await this.userPaymentRepository.findOne({
+    async getUserPayments(user: User): Promise<UserPaymentMethod[]> {
+        const userPaymentMethods: UserPaymentMethod[] = await this.userPaymentRepository.find({
             where: { user },
             relations: ['paymentType']
         })
-        return userPaymentMethod;
+        return userPaymentMethods;
     }
     async addUserPayment(user: User, data: UserPaymentDto): Promise<UserPaymentMethod> {
         const paymentType: PaymentType = await this.paymentTypeRepository.findOne({ where: { value: data.paymentType } })
@@ -82,12 +82,14 @@ export class PaymentService {
     }
 
     async deleteUserPayment(id: number) {
+
         const result = await this.entityManager
             .createQueryBuilder()
             .delete()
-            .from(UserPaymentDto)
+            .from(UserPaymentMethod)
             .where('id = :id', { id })
             .execute();
+
 
         if (result.affected < 1)
             throw new NotFoundException(errorMessages.payment.notFound);

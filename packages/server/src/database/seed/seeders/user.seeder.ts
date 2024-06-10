@@ -6,6 +6,7 @@ import { faker } from '@faker-js/faker';
 import { Role } from "src/database/entities/role/role.entity";
 import { SeederInterface } from "../seed.interference";
 import * as bcrypt from 'bcrypt';
+import { ShoppingCart } from "src/database/entities/cart/cart.entity";
 
 @Injectable()
 export class UserSeeder implements SeederInterface {
@@ -14,6 +15,8 @@ export class UserSeeder implements SeederInterface {
         private readonly userRepository: Repository<User>,
         @InjectRepository(Role)
         private readonly roleRepository: Repository<Role>,
+        @InjectRepository(ShoppingCart)
+        private readonly cartRepository: Repository<ShoppingCart>,
         @InjectEntityManager()
         private readonly entityManager: EntityManager,
     ) { }
@@ -49,13 +52,17 @@ export class UserSeeder implements SeederInterface {
                 if (!user) {
                     throw new Error('User not found after upsert');
                 }
-        
+
+                const cart = await transactionalEntityManager.getRepository(ShoppingCart).create({});
                 // Fetch the role with name 'User'
                 const userRole = await this.roleRepository.findOneBy({ name: 'User' });
                 user.roles = [userRole];
-        
+                cart.user = user;
+
+                await transactionalEntityManager.save(ShoppingCart, cart);
                 // Save the user with the new role
                 await transactionalEntityManager.save(User, user);
+
             } catch (error) {
                 console.error('Transaction failed:', error);
                 throw error; // Optional: re-throw the error to be handled by higher-level logic

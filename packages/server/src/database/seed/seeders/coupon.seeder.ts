@@ -24,16 +24,24 @@ export class CouponSeeder {
     await this.seedCoupons(GENERATE_COUNT);
   }
 
-  private generateCouponData(): Partial<Coupon> {
-    // Generate coupon data
+  private getRandomType(values:any){
+    return values[Math.floor(Math.random() * values.length)];
+  }
+
+  private generateCouponData(): Partial<Coupon> { 
     return {
       code: this.generateCouponCode(),
       discount: parseFloat(faker.finance.amount(5, 50, 2)), // Random discount amount between 5 and 50
-      expire: faker.date.future(), // Random future date for expiry
-      isActive: false, // Randomly set isActive to true or false
-    };
+      expire: faker.date.between({ from: '2020-01-01T00:00:00.000Z', to: '2030-01-01T00:00:00.000Z' }),
+      isActive: faker.datatype.boolean(), // Randomly set isActive to true or false
+      description: faker.lorem.sentence(),
+      discountType: this.getRandomType(['percentage', 'fixed_amount']),
+      startDate: faker.date.recent(), // Random recent date for start
+      usageLimit: faker.datatype.number({ min: 1, max: 100 }), // Random usage limit between 1 and 100
+      usageCount: faker.datatype.number({ min: 0, max: 10 }), // Random usage count between 0 and 10
+      minOrderValue: parseFloat(faker.finance.amount(10, 100, 2)), // Random min order value between 10 and 100
+    }; 
   }
-
   async seedCoupons(numCoupons: number) {
     for (let i = 0; i < numCoupons; i++) {
       const couponData = this.generateCouponData();

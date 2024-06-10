@@ -6,6 +6,8 @@ import { CreateCouponDto } from "../dto/create-coupon.dto";
 import { errorMessages } from "src/errors/custom";
 import { successObject } from "src/common/helper/sucess-response.interceptor";
 import { UpdateCouponDto } from "../dto/update-coupon.dto";
+import { User } from "src/database/entities/user/user.entity";
+import { ShoppingCart } from "src/database/entities/cart/cart.entity";
 
 @Injectable()
 export class CouponService {
@@ -19,6 +21,7 @@ export class CouponService {
     async getCoupon(id: number) {
         return this.couponRepository.findOne({ where: { id } });
     }
+
 
     async createCoupon(data: CreateCouponDto): Promise<Coupon> {
         const coupon: Coupon = this.couponRepository.create(data);

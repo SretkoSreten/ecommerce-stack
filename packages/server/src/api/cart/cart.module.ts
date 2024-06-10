@@ -8,6 +8,7 @@ import { ShoppingCartItem } from "src/database/entities/cart/cart_item.entity";
 import { User } from "src/database/entities/user/user.entity";
 import { Product } from "src/database/entities/product/product.entity";
 import { ProductItem } from "src/database/entities/product/product_item.entity";
+import { Coupon } from "src/database/entities/coupon/coupon.entity";
 
 @Module({
     imports: [
@@ -17,7 +18,8 @@ import { ProductItem } from "src/database/entities/product/product_item.entity";
             ShoppingCartItem,
             User,
             Product,
-            ProductItem
+            ProductItem,
+            Coupon
         ])
     ],
     controllers: [CartController],

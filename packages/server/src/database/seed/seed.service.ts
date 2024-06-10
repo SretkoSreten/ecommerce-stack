@@ -13,7 +13,6 @@ import { CategorySeederSeeder } from './seeders/category.seeder';
 import { ProductSeeder } from './seeders/product.seeder';
 import { ShoppingCart } from '../entities/cart/cart.entity';
 import { ShoppingCartItemSeeder } from './seeders/cart-item.seeder';
-import { ShoppingCartSeeder } from './seeders/cart.seeder';
 import { VariationSeeder } from './seeders/variation.seeder';
 import { VariationOptionSeeder } from './seeders/variation-option.seeder';
 import { CouponSeeder } from './seeders/coupon.seeder';
@@ -40,7 +39,6 @@ export class SeedService {
     userPaymentSeeder: UserPaymentMethodSeeder,
     categorySeeder: CategorySeederSeeder,
     productSeeder: ProductSeeder,
-    cartSeeder: ShoppingCartSeeder,
     cartItemSeeder: ShoppingCartItemSeeder,
     variationSeeder: VariationSeeder,
     variationOptionSeeder: VariationOptionSeeder,
@@ -59,10 +57,9 @@ export class SeedService {
       addressSeeder,
       paymentTypeSeeder,
       userPaymentSeeder,
-      categorySeeder,
+      categorySeeder, 
       variationSeeder,
       variationOptionSeeder,
-      cartSeeder,
       productSeeder,
       cartItemSeeder,
       couponSeeder,

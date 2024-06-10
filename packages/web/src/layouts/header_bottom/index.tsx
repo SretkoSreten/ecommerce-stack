@@ -54,6 +54,7 @@ const HeaderBottom: React.FC = () => {
   }
 
   const handleCategory = (name: string, parentName: string | null = null) => {
+  
     let updatedCategories: any = { categories: [], subcategories: {} };
 
     if (parentName) {
@@ -95,6 +96,8 @@ const HeaderBottom: React.FC = () => {
       categories: JSON.stringify(updatedCategories),
     };
     setSearchParams(newParams);
+    
+    return navigate(`/shop/${window.location.search}`)
   };
 
   return (
@@ -186,7 +189,7 @@ const HeaderBottom: React.FC = () => {
                   transition={{ duration: 0.5 }}
                   className="absolute top-6 right-10 z-50 bg-white w-44 text-[#767676] h-auto p-2"
                 >
-                  {data && data.auth ? (
+                  {data && data.auth.data ? (
                     <>
                       <li className="text-gray-400 px-4 py-1 border-b-[1px] border-b-gray-400 duration-300 cursor-pointer">
                         Profile

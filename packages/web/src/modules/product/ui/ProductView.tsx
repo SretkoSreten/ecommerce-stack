@@ -27,7 +27,7 @@ const ProductDetails: React.FC = () => {
   const { product, sale } = data;
 
   return (
-    <div className="w-full mx-auto border-b-[1px] border-b-gray-300">
+    <div className="max-w-container w-full mx-auto border-b-[1px] border-b-gray-300">
       {loading ? (
         <Loading/>
       ) : (

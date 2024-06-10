@@ -16,6 +16,7 @@ import { ShoppingCart } from "src/database/entities/cart/cart.entity";
 import { CartService } from "../cart/services/cart.service";
 import { ShoppingCartItem } from "src/database/entities/cart/cart_item.entity";
 import { ProductItem } from "src/database/entities/product/product_item.entity";
+import { Coupon } from "src/database/entities/coupon/coupon.entity";
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ProductItem } from "src/database/entities/product/product_item.entity";
       ShoppingCart,
       ShoppingCartItem,
       ProductItem,
+      Coupon
     ]),
     JwtModule.register({
       global: true,

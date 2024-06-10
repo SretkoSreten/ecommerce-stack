@@ -19,6 +19,15 @@ export class CartController {
         return this.cartService.getUserCart(user);
     }
 
+    @Auth(Roles.USER, Roles.ADMIN)
+    @Post('apply-coupon')
+    applyCoupon(
+        @CurrentUser() user: User,
+        @Body() {code, total}: any
+    ) {
+        return this.cartService.applyCoupon(user, code, total);
+    }
+
     
     @Auth(Roles.USER, Roles.ADMIN)
     @Get('user/items')

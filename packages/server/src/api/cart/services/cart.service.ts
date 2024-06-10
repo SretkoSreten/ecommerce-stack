@@ -7,6 +7,7 @@ import { errorMessages } from "src/errors/custom";
 import { EntityManager, Repository } from "typeorm";
 import { ShoppingCartItem } from "src/database/entities/cart/cart_item.entity";
 import { ProductItem } from "src/database/entities/product/product_item.entity";
+import { Coupon } from "src/database/entities/coupon/coupon.entity";
 
 @Injectable()
 export class CartService {
@@ -17,6 +18,8 @@ export class CartService {
     private readonly cartItemRepository: Repository<ShoppingCartItem>,
     @InjectRepository(ProductItem)
     private readonly productItemRepository: Repository<ProductItem>,
+    @InjectRepository(Coupon)
+    private readonly couponRepository: Repository<Coupon>,
     @InjectEntityManager()
     private readonly entityManager: EntityManager
   ) {}
@@ -39,6 +42,7 @@ export class CartService {
     const cart = await this.entityManager
       .createQueryBuilder(ShoppingCart, "cart")
       .leftJoinAndSelect("cart.user", "user")
+      .leftJoinAndSelect("cart.coupon", "coupon")
       .leftJoinAndSelect("cart.items", "items")
       .leftJoinAndSelect("items.productItem", "productItem")
       .leftJoinAndSelect("productItem.product", "product")
@@ -87,6 +91,56 @@ export class CartService {
     await this.productItemRepository.save(cartItem.productItem);
 
     return successObject;
+  }
+
+  public async applyCoupon(
+    user: User,
+    couponCode: string,
+    total: number
+  ): Promise<ShoppingCart> {
+
+    const coupon: Coupon = await this.couponRepository.findOne({
+      where: { code: couponCode },
+    });
+
+    // Check if the coupon exists and is active
+    if (!coupon || !coupon.isActive) {
+      throw new NotFoundException(errorMessages.coupon.notActive);
+    }
+
+    // Fetch the user's shopping cart
+    const userCart: ShoppingCart = await this.cartRepository.findOne({
+      where: { user },
+      relations: ["coupon"],
+    });
+
+    // Check if the user's shopping cart exists
+    if (!userCart) {
+      throw new NotFoundException(errorMessages.coupon.notFound);
+    }
+
+    // Validate coupon usage constraints
+    if (coupon.expire < new Date()) {
+      throw new NotFoundException(errorMessages.coupon.expired);
+    }
+    if (coupon.usageLimit && coupon.usageCount >= coupon.usageLimit) {
+      throw new NotFoundException(errorMessages.coupon.limited);
+    }
+    if (coupon.minOrderValue && total < coupon.minOrderValue) {
+      throw new NotFoundException(errorMessages.coupon.minOrderValue);
+    }
+
+    // Apply the coupon to the user's cart
+    userCart.coupon = coupon;
+
+    // Increment the coupon usage count
+    coupon.usageCount += 1;
+
+    // Save the updated cart and coupon
+    await this.cartRepository.save(userCart);
+    await this.couponRepository.save(coupon);
+
+    return userCart;
   }
 
   public async clearCart(user: User) {

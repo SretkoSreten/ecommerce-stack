@@ -113,16 +113,18 @@ export const decreaseQuantity = (id: number) => {
   };
 };
 
-export const fetchCartItems = () => {
+export const fetchCart = () => {
   return async (dispatch: Dispatch) => {
     dispatch(getItemsRequest());
 
     try {
       const token = localStorage.getItem("token");
 
-      const { data } = await axios.get("/api/carts/user/items", {
+      const response = await axios.get("/api/carts/user", {
         headers: { Authorization: `Bearer ${token}` },
       });
+
+      const {data} = response.data;
 
       dispatch(getItemsSuccess(data));
       dispatch<any>(fetchLayout())

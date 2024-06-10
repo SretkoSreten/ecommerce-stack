@@ -10,12 +10,12 @@ export const C: React.FC<FormikProps<FormValues> & Props> = ({
   return (
     <div className="flex flex-col items-center bg-[#F5F5F3] justify-center mx-auto">
       <div className="w-full rounded-lg shadow bg-white sm:max-w-md my-10 xl:p-0">
-      <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+        <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
           <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
             Sign up
           </h1>
           <Form className="space-y-4">
-          {errors.message && (
+            {errors.message && (
               <div className="text-sm pt-2 rounded-lg text-red-400">
                 <span className="font-medium">{errors.message}</span>
               </div>
@@ -36,10 +36,7 @@ export const C: React.FC<FormikProps<FormValues> & Props> = ({
               />
             </div>
             <div>
-              <label
-                htmlFor="email"
-                className="block mb-2 text-sm font-medium"
-              >
+              <label htmlFor="email" className="block mb-2 text-sm font-medium">
                 Your email
               </label>
               <Field
@@ -51,10 +48,7 @@ export const C: React.FC<FormikProps<FormValues> & Props> = ({
               />
             </div>
             <div>
-              <label
-                htmlFor="phone"
-                className="block mb-2 text-sm font-medium"
-              >
+              <label htmlFor="phone" className="block mb-2 text-sm font-medium">
                 Phone
               </label>
               <Field
@@ -83,7 +77,7 @@ export const C: React.FC<FormikProps<FormValues> & Props> = ({
 
             <button
               type="submit"
-              className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800"
+              className="w-full text-white bg-primeColor font-medium text-sm uppercase px-5 py-2.5 text-center"
             >
               Sign up
             </button>

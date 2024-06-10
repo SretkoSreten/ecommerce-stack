@@ -23,7 +23,6 @@ import { ProductSeeder } from './seeders/product.seeder';
 import { ProductItem } from '../entities/product/product_item.entity';
 import { ShoppingCart } from '../entities/cart/cart.entity';
 import { ShoppingCartItem } from '../entities/cart/cart_item.entity';
-import { ShoppingCartSeeder } from './seeders/cart.seeder';
 import { ShoppingCartItemSeeder } from './seeders/cart-item.seeder';
 import { Variation } from '../entities/variation/variation.entity';
 import { VariationOption } from '../entities/variation/variation_option.entity';
@@ -80,7 +79,6 @@ import { UserReviewSeeder } from './seeders/review.seeder';
     UserPaymentMethodSeeder,
     CategorySeederSeeder,
     ProductSeeder,
-    ShoppingCartSeeder,
     ShoppingCartItemSeeder,
     VariationSeeder,
     VariationOptionSeeder,

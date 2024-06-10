@@ -13,10 +13,10 @@ export class PaymentController {
 
     @Auth(Roles.USER, Roles.ADMIN)
     @Get('user')
-    getUserPayment(
+    getUserPayments(
         @CurrentUser() user: User
     ) {
-        return this.paymentService.getUserPayment(user);
+        return this.paymentService.getUserPayments(user);
     }
 
     @Auth(Roles.USER, Roles.ADMIN)

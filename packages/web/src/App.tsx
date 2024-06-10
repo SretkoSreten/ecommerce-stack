@@ -14,6 +14,8 @@ import { LogoutConnector } from "./modules/logout";
 import ProductConnector from "./modules/product";
 import CartConnector from "./modules/cart";
 import ShopConnector from "./modules/shop";
+import AccountConnector from "./modules/account";
+import OrderConnector from "./modules/order";
 
 const Layout = () => {
   return (
@@ -38,6 +40,8 @@ function App() {
               <Route index element={<HomeView />} />
               <Route path="/logout" element={<LogoutConnector />} />
               <Route path="/cart" element={<CartConnector />} />
+              <Route path="/account" element={<AccountConnector />} />
+              <Route path="/order" element={<OrderConnector />} />
             </Route>
             <Route path="/shop" element={<ShopConnector />} />
             <Route path="/product/:id" element={<ProductConnector />} />
