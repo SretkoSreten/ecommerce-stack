@@ -1,5 +1,5 @@
 import React from "react";
-import { AddressProps } from "./dto/address.dto";
+import { AddressProps } from "./dto/order.dto";
 import { Field } from "formik";
 import { CheckField } from "../../modules/shared/CheckField";
 import { useSearchParams } from "react-router-dom";

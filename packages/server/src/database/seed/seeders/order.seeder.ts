@@ -74,10 +74,8 @@ export class ShopOrderSeeder {
             payment_method: paymentMethod,
             shipping_address: address,
             shippingMethod,
-            order_status: orderStatus.status,
-            coupon_id: coupon?.id,
-            order_total: parseFloat(faker.finance.amount()),
             coupon,
+            order_total: parseFloat(faker.finance.amount()),
             orderStatus,
         };
     }

@@ -12,6 +12,34 @@ export const navBarList = [
   }
 ];
 
+export const accSidebarList = [
+  {
+    _id: 1001,
+    title: "My Profile",
+    link: "/account/edit"
+  },
+  {
+    _id: 1002,
+    title: "Address Book",
+    link: "/account/book/addresses"
+  },
+  {
+    _id: 1003,
+    title: "My Payment Options",
+    link: "/account/payments"
+  },
+  {
+    _id: 1004,
+    title: "Orders",
+    link: "/account/orders"
+  },
+  {
+    _id: 1005,
+    title: "Delete Account",
+    link: "/account/delete"
+  }
+];
+
 export const priceList = [
   {
     _id: 950,

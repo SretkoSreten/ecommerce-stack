@@ -1,10 +1,14 @@
-import { InjectRepository } from "@nestjs/typeorm";
+import { NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { InjectEntityManager, InjectRepository } from "@nestjs/typeorm";
 import { count } from "console";
+import { successObject } from "src/common/helper/sucess-response.interceptor";
 import { Address } from "src/database/entities/address/address.entity";
 import { UserAddress } from "src/database/entities/address/user-address.entity";
 import { Country } from "src/database/entities/country/country.entity";
 import { User } from "src/database/entities/user/user.entity";
-import { Repository, getRepository } from "typeorm";
+import { errorMessages } from "src/errors/custom";
+import { EntityManager, Not, Repository, getRepository } from "typeorm";
+import { CreateAddressDto } from "../dto/create-address.dto";
 
 export class AddressService {
   constructor(
@@ -13,42 +17,50 @@ export class AddressService {
     @InjectRepository(UserAddress)
     private readonly userAddressRepository: Repository<UserAddress>,
     @InjectRepository(Country)
-    private readonly countryRepository: Repository<Country>
+    private readonly countryRepository: Repository<Country>,
+    @InjectEntityManager()
+    private readonly entityManager: EntityManager
   ) {}
 
-  async createAddress(addressData: Partial<any>): Promise<Address> {
+  async createAddress(
+    user: User,
+    addressData: CreateAddressDto
+  ): Promise<Address> {
     try {
-      // Extract address data and set address line properties
-      const { address, country: countryName, ...restData } = addressData;
-      const newData: Partial<Address> = {
-        address_line1: address,
-        address_line2: address,
-        ...restData,
-      };
+      // Destructure and spread address data to avoid mutating the original input
+      const { country, ...rest } = addressData;
 
       // Find country by name
-      const country = await this.countryRepository.findOne({
-        where: { name: countryName },
+      const countryFound = await this.countryRepository.findOne({
+        where: { name: country },
       });
 
-      if (!country) {
-        throw new Error(`Failed to find country named: ${countryName}`);
+      if (!countryFound) {
+        throw new NotFoundException(`Failed to find country named: ${country}`);
       }
 
-      // Set country association
-      newData.countries = country;
+      // Create new address data with the associated country entity
+      const newAddressData = { ...rest, country: countryFound };
 
       // Create and save the new address
-      const newAddress = this.addressRepository.create(newData);
-      const savedAddress = await this.addressRepository.save(newAddress);
+      const newAddress = this.addressRepository.create(newAddressData);
+      await this.addressRepository.save(newAddress);
 
-      return savedAddress;
+      // Create and save the user address association
+      const userAddress = this.userAddressRepository.create({
+        address: newAddress,
+        user,
+      });
+      await this.userAddressRepository.save(userAddress);
+
+      return newAddress;
     } catch (error) {
       throw new Error(`Failed to create address: ${error.message}`);
     }
   }
 
   async getUserAddresses(user: User) {
+    console.log(user);
     const addresses = await this.userAddressRepository.find({
       where: { user },
       relations: ["address"],
@@ -56,45 +68,43 @@ export class AddressService {
     return addresses;
   }
 
-  async selectAddress(user: User, id: number): Promise<UserAddress | null> {
+  async selectAddress(user: User, id: number): Promise<any> {
     try {
-      // Reset all addresses for the user to not be default
-      const userAddresses = await this.userAddressRepository.find({
-        where: { user },
+      // Find the selected address
+      const userAddressFound = await this.userAddressRepository.findOne({
+        where: { id, user },
       });
-      if (userAddresses.length > 0) {
-        await Promise.all(
-          userAddresses.map((address) =>
-            this.userAddressRepository.update(
-              { id: address.id },
-              { is_default: false }
-            )
-          )
-        );
+
+      if (!userAddressFound) {
+        throw new Error(`Address with ID ${id} not found for the user`);
       }
 
-      const address: UserAddress = await this.userAddressRepository.findOneBy({
-        id,
-      });
-      // Set the specified address as default
-      await this.userAddressRepository.update(
-        { id },
-        { is_default: !address.is_default }
+      // Ensure the selected address is not already the default
+      if (userAddressFound.is_default) {
+        return successObject;
+      }
+
+      // Start a transaction to ensure atomicity
+      await this.userAddressRepository.manager.transaction(
+        async (transactionalEntityManager) => {
+          // Update all other addresses of the user to not be the default
+          await transactionalEntityManager.update(
+            UserAddress,
+            { user, id: Not(id) },
+            { is_default: false }
+          );
+
+          // Update the selected address to be the default
+          await transactionalEntityManager.update(
+            UserAddress,
+            { id },
+            { is_default: true }
+          );
+        }
       );
 
-      // Return the updated address
-      const updatedAddress = await this.userAddressRepository.findOne({
-        where: { id },
-      });
-
-      // If the address could not be found, throw an error
-      if (!updatedAddress) {
-        throw new Error("Address not found");
-      }
-
-      return updatedAddress;
+      return successObject;
     } catch (error) {
-      // Log the error and rethrow it to be handled by the caller
       console.error("Error selecting address:", error);
       throw new Error("Unable to select address");
     }
@@ -107,27 +117,44 @@ export class AddressService {
     userAddress.is_default = true;
     return this.userAddressRepository.save(userAddress);
   }
-
-  async getAddressById(addressId: number): Promise<Address | undefined> {
-    const addressRepository = getRepository(Address);
-
+  async getAddressById(addressId: number): Promise<Address> {
     try {
-      const address = await addressRepository.findOneBy({ id: addressId });
+      const address = await this.addressRepository.findOne({
+        where: { id: addressId },
+        relations: ["country"],
+      });
+
+      if (!address) {
+        throw new NotFoundException(`Address with ID ${addressId} not found`);
+      }
+
       return address;
     } catch (error) {
-      throw new Error(`Failed to get address: ${error.message}`);
+      throw new NotFoundException(`Failed to get address: ${error.message}`);
     }
   }
 
   async updateAddress(
     addressId: number,
-    addressData: Partial<Address>
-  ): Promise<Address | undefined> {
-    const addressRepository = getRepository(Address);
+    addressData: CreateAddressDto
+  ): Promise<any> {
+    const address = await this.addressRepository.findOne({
+      where: { id: addressId },
+    });
+    if (!address) {
+      throw new UnauthorizedException(errorMessages.address.notFound);
+    }
+
+    const countryName = addressData.country;
+    const country: Country = await this.countryRepository.findOneBy({
+      name: countryName,
+    });
+    delete addressData.country;
+    const data = { ...addressData, country };
 
     try {
-      await addressRepository.update(addressId, addressData);
-      const updatedAddress = await addressRepository.findOneBy({
+      await this.addressRepository.update(addressId, data);
+      const updatedAddress = await this.addressRepository.findOneBy({
         id: addressId,
       });
       return updatedAddress;
@@ -136,13 +163,14 @@ export class AddressService {
     }
   }
 
-  async deleteAddress(addressId: number): Promise<void> {
-    const addressRepository = getRepository(Address);
+  async deleteAddress(addressId: number): Promise<any> {
+    await this.entityManager
+      .createQueryBuilder()
+      .delete()
+      .from(Address)
+      .where("id = :addressId", { addressId })
+      .execute();
 
-    try {
-      await addressRepository.delete(addressId);
-    } catch (error) {
-      throw new Error(`Failed to delete address: ${error.message}`);
-    }
+    return successObject;
   }
 }

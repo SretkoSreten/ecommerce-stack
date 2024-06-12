@@ -31,6 +31,6 @@ export class Address {
   @OneToMany(() => UserAddress, userAddress => userAddress.address)
   userAddresses: UserAddress[];
     
-  @ManyToOne(() => Country, country => country.addresses, {nullable: true})
-  countries: Country;
+  @ManyToOne(() => Country, country => country.addresses, {nullable: true, onDelete: 'CASCADE'})
+  country: Country;
 }

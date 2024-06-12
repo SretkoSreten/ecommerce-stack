@@ -1,16 +1,33 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import {
   calcDiscountAmount,
-  calcTotalPrice,
+  calcWithShippingPrice,
   subtractPrice,
 } from "../../common/helpers/cart.helper";
+import { OrderBottomProps } from "./dto/order.dto";
 
-export const OrderBottom: React.FC<any> = ({ data }) => {
-  if (!data) return;
+export const OrderBottom: React.FC<OrderBottomProps> = ({ data, shippingMethods }) => {
+  const [searchParams] = useSearchParams();
+  const [shipPrice, setShipPrice] = useState<number | null>(null);
+
+  useEffect(() => {
+    const shippingID = searchParams.get('shipping');
+    if (shippingID) {
+      const shipping = shippingMethods.find((ship) => ship.id == shippingID);
+      if (shipping) {
+        setShipPrice(shipping.price);
+      } else {
+        setShipPrice(0); 
+      }
+    }
+  }, [searchParams, shippingMethods]);
+
+  if (!data) return null;
 
   const total = subtractPrice(data);
   const discountAmount = calcDiscountAmount(data);
+  const finalTotal = calcWithShippingPrice(data, shipPrice ?? 0);
 
   return (
     <div className="w-full flex flex-col gap-4">
@@ -23,7 +40,7 @@ export const OrderBottom: React.FC<any> = ({ data }) => {
                   Original price
                 </dt>
                 <dd className="text-base font-medium text-gray-900">
-                  ${total}
+                  ${total.toFixed(2)}
                 </dd>
               </dl>
               {data.coupon && (
@@ -32,23 +49,31 @@ export const OrderBottom: React.FC<any> = ({ data }) => {
                     Savings
                   </dt>
                   <dd className="text-base font-medium text-green-600">
-                    -${discountAmount}
+                    -${discountAmount.toFixed(2)}
                   </dd>
                 </dl>
               )}
-              <dl className="flex items-center justify-between gap-4">
-                <dt className="text-base font-normal text-gray-500">
-                  Delivery
-                </dt>
-                <dd className="text-base font-medium text-red-600">
-                  +${10}
-                </dd>
-              </dl>
+              {shipPrice !== null && (
+                <dl className="flex items-center justify-between gap-4">
+                  <dt className="text-base font-normal text-gray-500">
+                    Delivery
+                  </dt>
+                  {shipPrice === 0 ? (
+                    <dd className="text-base font-medium text-green-600">
+                      Free
+                    </dd>
+                  ) : (
+                    <dd className="text-base font-medium text-red-600">
+                      +${shipPrice.toFixed(2)}
+                    </dd>
+                  )}
+                </dl>
+              )}
             </div>
             <dl className="flex items-center justify-between gap-4 border-t border-gray-200 pt-2">
               <dt className="text-base font-bold text-gray-900">Total</dt>
               <dd className="text-base font-bold text-gray-900">
-                ${calcTotalPrice(data)}
+                ${finalTotal.toFixed(2)}
               </dd>
             </dl>
           </div>
@@ -64,16 +89,15 @@ export const OrderBottom: React.FC<any> = ({ data }) => {
             </span>
             <Link
               to="/shop"
-              title=""
               className="inline-flex items-center gap-2 text-sm font-medium text-primary-700 underline hover:no-underline dark:text-primary-500"
             >
               Continue Shopping
               <svg
                 className="h-5 w-5"
-                aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
+                aria-hidden="true"
               >
                 <path
                   stroke="currentColor"

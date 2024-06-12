@@ -54,7 +54,6 @@ const HeaderBottom: React.FC = () => {
   }
 
   const handleCategory = (name: string, parentName: string | null = null) => {
-  
     let updatedCategories: any = { categories: [], subcategories: {} };
 
     if (parentName) {
@@ -96,8 +95,8 @@ const HeaderBottom: React.FC = () => {
       categories: JSON.stringify(updatedCategories),
     };
     setSearchParams(newParams);
-    
-    return navigate(`/shop/${window.location.search}`)
+
+    return navigate(`/shop/${window.location.search}`);
   };
 
   return (
@@ -191,10 +190,12 @@ const HeaderBottom: React.FC = () => {
                 >
                   {data && data.auth.data ? (
                     <>
-                      <li className="text-gray-400 px-4 py-1 border-b-[1px] border-b-gray-400 duration-300 cursor-pointer">
-                        Profile
-                      </li>
-                      <Link to="/logout">
+                      <Link to="/account/edit" onClick={() => setShowUser(false)}> 
+                        <li className="text-gray-400 px-4 py-1 border-b-[1px] border-b-gray-400 duration-300 cursor-pointer">
+                          Profile
+                        </li>
+                      </Link>
+                      <Link to="/logout" onClick={() => setShowUser(false)}>
                         <li className="text-gray-400 px-4 py-1 border-b-gray-400 duration-300 cursor-pointer">
                           Logout
                         </li>

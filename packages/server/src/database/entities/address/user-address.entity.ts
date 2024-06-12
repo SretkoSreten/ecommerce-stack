@@ -10,9 +10,9 @@ export class UserAddress {
   @Column({ default: false })
   is_default: boolean;
 
-  @ManyToOne(() => User, user => user.userAddresses)
+  @ManyToOne(() => User, user => user.userAddresses, {onDelete: 'CASCADE'})
   user: User; 
 
-  @ManyToOne(() => Address, address => address.userAddresses)
+  @ManyToOne(() => Address, address => address.userAddresses, {onDelete: 'CASCADE'})
   address: Address;
 }

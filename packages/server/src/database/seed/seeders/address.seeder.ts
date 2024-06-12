@@ -30,7 +30,7 @@ export class AddressSeeder {
             city: faker.location.city(),
             region: faker.location.state(),
             postal_code: faker.location.zipCode(),
-            countries: country,
+            country,
         };
     }
 

@@ -13,6 +13,7 @@ import { CouponModule } from "./coupon/coupon.module";
 import { OrderModule } from "./order/order.module";
 import { ReviewModule } from "./reviews/review.module";
 import { ShippingModule } from "./shipping/shipping.module";
+import { CountryModule } from "./country/country.module";
 
 @Module({
     imports: [
@@ -26,7 +27,8 @@ import { ShippingModule } from "./shipping/shipping.module";
         CouponModule,
         OrderModule,
         ReviewModule,
-        ShippingModule
+        ShippingModule,
+        CountryModule
     ],
     providers: [
         {

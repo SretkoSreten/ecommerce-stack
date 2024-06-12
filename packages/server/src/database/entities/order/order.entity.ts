@@ -22,17 +22,11 @@ export class ShopOrder {
   @ManyToOne(() => UserPaymentMethod, paymentType => paymentType.orders, { nullable: true, onDelete: 'SET NULL' })
   payment_method: UserPaymentMethod;
 
-  @ManyToOne(() => Address, { nullable: false })
+  @ManyToOne(() => Address, { nullable: true, onDelete: 'SET NULL' })
   shipping_address: Address;
 
   @ManyToOne(() => ShippingMethod, { nullable: false }) // Define many-to-one relationship with ShippingMethod
   shippingMethod: ShippingMethod;
-
-  @Column()
-  order_status: string;
-
-  @Column({ nullable: true })
-  coupon_id: number;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   order_total: number;

@@ -1,3 +1,8 @@
+export interface OrderBottomProps {
+  data: any;
+  shippingMethods: { id: string; price: number }[];
+}
+
 export interface AddressProps {
   id: number;
   is_default: boolean;

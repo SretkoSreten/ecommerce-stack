@@ -36,7 +36,10 @@ const C: React.FC<OrderViewProps & FormikProps<any>> = ({
             errors={errors}
             shippingMethods={data.shippingMethods}
           />
-          <RightSide data={data.cartData} />
+          <RightSide
+            data={data.cartData}
+            shippingMethods={data.shippingMethods}
+          />
         </div>
       </Form>
     </section>
@@ -50,7 +53,7 @@ export const OrderView = withFormik<any, any>({
   mapPropsToValues: ({ addressId, paymentMethodId, shippingId }) => ({
     addressId: addressId,
     paymentMethodId: paymentMethodId,
-    shipMethodId: shippingId,
+    shipMethodId: shippingId  
   }),
 
   handleSubmit: async (values, { props, setErrors }) => {

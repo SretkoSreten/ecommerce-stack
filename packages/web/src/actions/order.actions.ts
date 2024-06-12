@@ -8,6 +8,7 @@ import {
   GET_ORDER_SUCCESS,
   SET_DELIVERY_SUCCESS,
 } from "../constants/actions.constants";
+import { normalizeErrors } from "../utils/normalizeErrors";
 
 // Define action creators
 export const getOrderRequest = () => ({
@@ -28,12 +29,6 @@ export const deletePaymentSuccess = (data: any) => ({
   type: DELETE_PAYMENT_SUCCESS,
   payload: data,
 });
-
-export const setDeliverySuccess = (data: any) => ({
-  type: SET_DELIVERY_SUCCESS,
-  payload: data,
-});
-
 
 export const deletePayment = (id: number) => {
   return async (dispatch: Dispatch) => {
@@ -67,11 +62,29 @@ export const deletePayment = (id: number) => {
   };
 };
 
-export const setDeliveryMethod = (data: any) => {
+export const createOrder = (values: any) => {
   return async (dispatch: Dispatch) => {
-    dispatch(setDeliverySuccess(data))
-  }
-}
+    const token = localStorage.getItem("token");
+
+    values.addressId = parseInt(values.addressId)
+    values.paymentMethodId = parseInt(values.paymentMethodId)
+    values.shipMethodId = parseInt(values.shipMethodId)
+
+    console.log(values);
+    
+    const {
+      data: { message, isSuccess, errorCode, data },
+    }: any = await axios.post("/api/orders/create", values, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (!isSuccess) {
+      return normalizeErrors({ message, errorCode })
+    }
+
+    console.log(data);
+  };
+};
 
 export const fetchOrders = () => {
   return async (dispatch: Dispatch) => {
@@ -80,7 +93,12 @@ export const fetchOrders = () => {
     try {
       const token = localStorage.getItem("token");
 
-      const [paymentsResponse, addressResponse, shippingResponse, cartResponse] = await Promise.all([
+      const [
+        paymentsResponse,
+        addressResponse,
+        shippingResponse,
+        cartResponse,
+      ] = await Promise.all([
         token
           ? axios.get("/api/payments/user", {
               headers: { Authorization: `Bearer ${token}` },
@@ -91,8 +109,8 @@ export const fetchOrders = () => {
               headers: { Authorization: `Bearer ${token}` },
             })
           : Promise.resolve({ data: null }),
-          axios.get("/api/shipping"),
-          token
+        axios.get("/api/shipping"),
+        token
           ? axios.get("/api/carts/user", {
               headers: { Authorization: `Bearer ${token}` },
             })
@@ -106,7 +124,6 @@ export const fetchOrders = () => {
 
       const data = { payments, addresses, shippingMethods, cartData };
       dispatch(getOrderSuccess(data));
-      
     } catch (error) {}
   };
 };

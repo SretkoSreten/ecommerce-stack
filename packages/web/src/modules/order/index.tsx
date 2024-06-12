@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchOrders } from "../../actions/order.actions";
+import { createOrder, fetchOrders } from "../../actions/order.actions";
 import { OrderView } from "./ui/OrderView";
 import { useSearchParams } from "react-router-dom";
 
@@ -20,7 +20,7 @@ const OrderConnector: React.FC = () => {
   const [address, setAddress] = useState<string | undefined>();
   const [payment, setPayment] = useState<string | undefined>();
   const [shipping, setShipping] = useState<string | undefined>();
-  
+
   const dispatch = useDispatch();
   const { loading, data } = useSelector((state: any) => state.order);
 
@@ -44,36 +44,39 @@ const OrderConnector: React.FC = () => {
 
         const updatedParams = {
           ...existingParams,
-          payment: existingParams.payment ? existingParams.payment : defaultPayment,
-          address: existingParams.address ? existingParams.address : defaultAddress,
-          shipping: defaultShipping
+          payment: existingParams.payment
+            ? existingParams.payment
+            : defaultPayment,
+          address: existingParams.address
+            ? existingParams.address
+            : defaultAddress,
+          shipping: defaultShipping,
         };
 
         return new URLSearchParams(updatedParams);
       };
 
-      const params = ['address', 'payment', 'shipping'];
+      const params = ["address", "payment", "shipping"];
       const setters = [setAddress, setPayment, setShipping];
 
       setParamsFromSearch(setParams(), params, setters);
     }
-    
   }, [searchParams, setAddress, setPayment, setShipping, data]);
 
   if (!data) return;
 
   const handleSubmit = async (values: any): Promise<any> => {
-    console.log(values)
+    await dispatch<any>(createOrder(values))
   };
 
   const onError = () => {
     const container = document.getElementById("shipping");
     if (container) {
       container.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-        inline: 'start',
-    });
+        behavior: "smooth",
+        block: "center",
+        inline: "start",
+      });
     }
   };
 
@@ -92,6 +95,5 @@ const OrderConnector: React.FC = () => {
     </div>
   );
 };
-
 
 export default OrderConnector;

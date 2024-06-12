@@ -99,6 +99,12 @@ export const errorMessages = {
       code: "60201",
     },
   },
+  address: {
+    notFound: {
+      message: "Address not found",
+      code: "60201",
+    },
+  },
   order: {
     notFound: {
       message: "order not found",

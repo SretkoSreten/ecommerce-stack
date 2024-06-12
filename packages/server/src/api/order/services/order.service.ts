@@ -14,6 +14,7 @@ import { OrderStatus } from "src/database/entities/order/order_status.entity";
 import { Address } from "src/database/entities/address/address.entity";
 import { ShoppingCart } from "src/database/entities/cart/cart.entity";
 import { OrderLine } from "src/database/entities/order/order_line.entity";
+import { calcDiscountAmount, calcWithShippingPrice } from "src/common/helper/calcCart";
 
 
 @Injectable()
@@ -54,26 +55,32 @@ export class OrderService {
 
     public async createOrder(user: User, data: CreateOrderDto): Promise<ShopOrder> {
         return await this.entityManager.transaction(async transactionalEntityManager => {
-            // Find the shipping method
-            const shippingMethod = await transactionalEntityManager.findOne(ShippingMethod, { where: { name: data.shipping_method.name } });
-            if (!shippingMethod) {
-                throw new NotFoundException('Shipping method not found');
-            }
-
-            // Find the order status
-            const orderStatus = await transactionalEntityManager.findOne(OrderStatus, { where: { status: data.status } });
-            if (!orderStatus) {
-                throw new NotFoundException('Order status not found');
-            }
-
+            // Find the shipping method, order status, and payment method
+            const [shippingMethod, orderStatus, paymentMethod] = await Promise.all([
+                transactionalEntityManager.findOneOrFail(ShippingMethod, { where: { id: data.shipMethodId } }),
+                transactionalEntityManager.findOneOrFail(OrderStatus, { where: { status: 'Pending' } }),
+                transactionalEntityManager.findOneOrFail(UserPaymentMethod, { where: { id: data.paymentMethodId } })
+            ]);
+            
             // Create the shipping address
-            const createdAddress = await this.createAddress(transactionalEntityManager, data.shipping_address);
-
-            // Find the payment method
-            const paymentMethod = await transactionalEntityManager.findOne(UserPaymentMethod, { where: { id: data.paymentMethodId } });
-            if (!paymentMethod) {
-                throw new NotFoundException('Payment method not found');
-            }
+            const shippingAddress = await this.createAddress(transactionalEntityManager, data.addressId);
+            
+            // Find the user's shopping cart
+            const cart = await transactionalEntityManager.findOneOrFail(ShoppingCart, { where: { user }, relations: ['items', 'coupon', 'items.productItem'] });
+    
+            // Create and save the order lines
+            const orderLines = cart.items.map(cartItem => {
+                return transactionalEntityManager.create(OrderLine, {
+                    product: cartItem.productItem,
+                    quantity: cartItem.qty,
+                    price: cartItem.productItem.price * cartItem.qty,
+                });
+            });
+            
+            // Calculate total amount based on order lines and apply coupon
+            const totalAmount = orderLines.reduce((total, orderLine) => total + orderLine.price, 0);
+            const finalAmount = calcWithShippingPrice(totalAmount, cart.coupon, shippingMethod);
+            
 
             // Create the ShopOrder entity
             const order = transactionalEntityManager.create(ShopOrder, {
@@ -81,35 +88,24 @@ export class OrderService {
                 shippingMethod,
                 orderStatus,
                 payment_method: paymentMethod,
-                shipping_address: createdAddress,
-                order_status: data.status
+                shipping_address: shippingAddress,
+                coupon: cart.coupon,
+                order_total: finalAmount
             });
-
-            // Save the ShopOrder entity to get its ID
+            
+            // Save the ShopOrder entity
             const savedOrder = await transactionalEntityManager.save(order);
-
-            // Find the user's shopping cart
-            const cart = await transactionalEntityManager.findOne(ShoppingCart, { where: { user }, relations: ['items', 'items.productItem'] });
-            if (!cart || !cart.items.length) {
-                throw new NotFoundException('Shopping cart is empty');
-            }
-
-            // Create and save the order lines
-            const orderLines = cart.items.map(cartItem => {
-                return transactionalEntityManager.create(OrderLine, {
-                    product: cartItem.productItem,
-                    quantity: cartItem.qty,
-                    price: cartItem.productItem.price * cartItem.qty,
-                    order: savedOrder,
-                });
-            });
-
-            // Save all order lines
-            await transactionalEntityManager.save(orderLines);
-
+            
+            // Associate order lines with the saved order
+            await Promise.all(orderLines.map(orderLine => {
+                orderLine.order = savedOrder;
+                return transactionalEntityManager.save(orderLine);
+            }));
+    
             return savedOrder;
         });
     }
+    
 
     private async createAddress(transactionalEntityManager: EntityManager, addressData: any): Promise<Address> {
         const address = transactionalEntityManager.create(Address, addressData);
