@@ -19,7 +19,7 @@ export const OrderItem: React.FC<any> = (props) => {
               alt="imac image"
             />
           </a>
-          <Link to={`/products/${id}`} className="text-black hover:underline">
+          <Link to={`/product/${id}`} className="text-black hover:underline">
             {product.name}
           </Link>
         </div>

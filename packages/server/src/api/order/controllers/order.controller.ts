@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query } from "@nestjs/common";
 import { Auth } from "src/api/auth/guards/auth.decorator";
 import { Roles } from "src/api/role/role.enum";
 import { OrderService } from "../services/order.service";
@@ -16,8 +16,9 @@ export class OrderController {
     @Get('/user')
     async getUserOrder(
         @CurrentUser() user: User,
+        @Query() query: any
     ){
-        return this.orderService.getUserOrder(user);
+        return this.orderService.getUserOrder(user, query);
     }
     
     @Auth(Roles.USER, Roles.ADMIN)
@@ -25,9 +26,16 @@ export class OrderController {
     async getOrder(
         @Param() params: any
     ){
-        console.log("User" + params);
-
         return this.orderService.getOrder(params.id)
+    }
+
+    @Auth(Roles.USER, Roles.ADMIN)
+    @Get('cancel/:id')
+    async cancelOrder(
+        @CurrentUser() user: User,
+        @Param() params: any
+    ){
+        return this.orderService.cancelOrder(user, params.id);
     }
 
     @Auth(Roles.USER, Roles.ADMIN)

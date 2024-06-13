@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, EntityManager } from 'typeorm';
 import { faker } from '@faker-js/faker';
 import { OrderStatus } from 'src/database/entities/order/order_status.entity';
+import { StatusType } from 'src/constants/status.constants';
 
 @Injectable()
 export class OrderStatusSeeder {
@@ -14,7 +15,7 @@ export class OrderStatusSeeder {
 
   private generateOrderStatus(): string {
     // Generate a random order status
-    const statusOptions = ['Pending', 'Processing', 'Shipped', 'Delivered'];
+    const statusOptions = Object.values(StatusType)
     const rand = statusOptions[Math.floor(Math.random() * statusOptions.length)];
     return rand;
   }
@@ -28,7 +29,7 @@ export class OrderStatusSeeder {
 
   async seed(){
     const count: number = await this.orderStatusRepository.count();
-    const ORDER_COUNT: number = 10;
+    const ORDER_COUNT: number = Object.values(StatusType).length;
     const GENERATE_COUNT = ORDER_COUNT - count;
     await this.seedOrderStatuses(GENERATE_COUNT);
   }

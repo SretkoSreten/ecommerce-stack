@@ -53,15 +53,24 @@ export const OrderView = withFormik<any, any>({
   mapPropsToValues: ({ addressId, paymentMethodId, shippingId }) => ({
     addressId: addressId,
     paymentMethodId: paymentMethodId,
-    shipMethodId: shippingId  
+    shipMethodId: shippingId,
   }),
 
   handleSubmit: async (values, { props, setErrors }) => {
     const errors: any = {};
 
+    console.log(values);
     // Validate shippingId
-    if (values.shipMethodId == "undefined") {
+    if (values.shipMethodId == "null") {
       errors.shipMethodId = "Shipping option is required";
+    }
+
+    if (values.paymentMethodId == "null") {
+      errors.paymentMethodId = "Payment method is required";
+    }
+
+    if (values.addressId == "null") {
+      errors.addressId = "Address is required";
     }
 
     if (Object.keys(errors).length > 0) {

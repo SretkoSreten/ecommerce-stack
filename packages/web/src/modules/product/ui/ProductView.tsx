@@ -5,7 +5,6 @@ import ProductInfo from "../../../components/product/ProductInfo";
 import { ProductSpecs } from "../../../components/product/ProductSpecs";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProduct } from "../../../actions/product.actions";
-import ProductsOnSale from "../../../components/product/ProductsOnSale";
 import { Loading } from "../../../components/loading";
 
 const ProductDetails: React.FC = () => {
@@ -24,7 +23,7 @@ const ProductDetails: React.FC = () => {
 
   if (!data) return;
 
-  const { product, sale } = data;
+  const { product } = data;
 
   return (
     <div className="max-w-container w-full mx-auto border-b-[1px] border-b-gray-300">

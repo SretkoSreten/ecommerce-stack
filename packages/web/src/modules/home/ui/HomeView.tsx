@@ -6,15 +6,17 @@ import { fetchProducts } from "../actions";
 
 const Home = () => {
   const dispatch = useDispatch();
-  const {loading, products} = useSelector((state:any) => state.home);
+  const { loading, products } = useSelector((state: any) => state.home);
 
   useEffect(() => {
     dispatch<any>(fetchProducts());
   }, []);
 
   return (
-    <div className="w-full mx-auto">
-      <Banner />
+    <div className="mx-auto">
+      <div className="md:block hidden">
+        <Banner />
+      </div>
       <div className="max-w-container mx-auto px-10">
         {!loading && products.data && <NewArrivals products={products.data} />}
       </div>

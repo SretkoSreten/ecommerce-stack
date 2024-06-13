@@ -1,5 +1,7 @@
+import { OrdersView } from "./ui/OrdersView"
+
 export const AccountOrdersConnector = () => {
     return (
-        <>Account Orders</>
+        <OrdersView/>
     )
 }

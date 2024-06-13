@@ -17,7 +17,7 @@ import layoutReducer from "../reducers/layout.reducer";
 import productReducer from "../reducers/product.reducer";
 import cartReducer from "../reducers/cart.reducer";
 import shopReducer from "../reducers/shop.reducer";
-import orderReducer from "../reducers/order.reducers";
+import { orderReducer, accOrdersReducer, orderDetailsReducer } from "../reducers/order.reducers";
 import accountReducer from "../reducers/account.reducers";
 import { addressReducer, addressesReducer } from "../reducers/addresses.reducers";
 import countryReducer from "../reducers/country.reducers";
@@ -30,6 +30,8 @@ const rootReducer = {
   auth: persistReducer(persistConfig, authReducer),
   shop: shopReducer,
   order: orderReducer,
+  orderDetails: orderDetailsReducer,
+  accOrders: accOrdersReducer,
   account: accountReducer,
   addresses: addressesReducer,
   address: addressReducer,

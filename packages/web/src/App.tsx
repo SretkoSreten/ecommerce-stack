@@ -22,6 +22,8 @@ import AccSidebarConnector from "./layouts/acc_sidebar";
 import CreateAddressConnector from "./modules/addresses/create";
 import { DeleteAccountConnector } from "./modules/acc_delete";
 import { AccountOrdersConnector } from "./modules/acc_orders";
+import { OrderDetailsConnector } from "./modules/order_details";
+import { NotFoundConnector } from "./modules/notFound";
 
 const Layout = () => {
   return (
@@ -43,7 +45,6 @@ function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route element={<ProtectedRoute />}>
-              <Route index element={<HomeView />} />
               <Route path="/logout" element={<LogoutConnector />} />
               <Route path="/cart" element={<CartConnector />} />
               <Route path="/order" element={<OrderConnector />} />
@@ -69,12 +70,18 @@ function App() {
                   path="/account/orders"
                   element={<AccountOrdersConnector />}
                 />
+                <Route
+                  path="/account/orders/:id"
+                  element={<OrderDetailsConnector />}
+                />
               </Route>
             </Route>
+            <Route path="/home" element={<HomeView />} />
             <Route path="/shop" element={<ShopConnector />} />
             <Route path="/product/:id" element={<ProductConnector />} />
             <Route path="/login" element={<LoginConnector />} />
             <Route path="/register" element={<RegisterConnector />} />
+            <Route path="*" element={<NotFoundConnector />} />
           </Route>
         </Routes>
       </AuthProvider>

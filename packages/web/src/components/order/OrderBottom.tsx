@@ -13,7 +13,7 @@ export const OrderBottom: React.FC<OrderBottomProps> = ({ data, shippingMethods 
 
   useEffect(() => {
     const shippingID = searchParams.get('shipping');
-    if (shippingID) {
+    if (shippingID && shippingMethods) {
       const shipping = shippingMethods.find((ship) => ship.id == shippingID);
       if (shipping) {
         setShipPrice(shipping.price);

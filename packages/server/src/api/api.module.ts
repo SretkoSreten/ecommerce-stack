@@ -14,6 +14,7 @@ import { OrderModule } from "./order/order.module";
 import { ReviewModule } from "./reviews/review.module";
 import { ShippingModule } from "./shipping/shipping.module";
 import { CountryModule } from "./country/country.module";
+import { OrderStatusMOdule } from "./order_status/order_status.module";
 
 @Module({
     imports: [
@@ -28,7 +29,8 @@ import { CountryModule } from "./country/country.module";
         OrderModule,
         ReviewModule,
         ShippingModule,
-        CountryModule
+        CountryModule,
+        OrderStatusMOdule
     ],
     providers: [
         {

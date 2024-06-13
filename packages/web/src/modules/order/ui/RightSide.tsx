@@ -6,7 +6,8 @@ export const RightSide = ({ data, shippingMethods }: any) => {
     <div>
       <table className="text-left font-medium text-gray-900">
         <tbody className="divide-y divide-gray-200">
-          {data.items &&
+          {data &&
+            data.items &&
             data.items.map((item: any) => {
               return <OrderItem key={item.id} {...item} />;
             })}

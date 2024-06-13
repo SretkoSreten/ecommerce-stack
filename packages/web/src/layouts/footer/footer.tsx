@@ -6,6 +6,7 @@ import Image from "../layout/Image";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchLayout } from "../../actions/layout.actions";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { accSidebarList } from "../../constants";
 
 const Footer = () => {
   const dispatch = useDispatch();
@@ -68,45 +69,19 @@ const Footer = () => {
       {!loading && (
         <div className="max-w-container mx-auto grid grid-cols-1 md:grid-cols-2  xl:grid-cols-6 px-10 gap-10">
           <div className="col-span-2">
-            <FooterListTitle title=" More about Orebi Shop" />
+            <FooterListTitle title="More about Ecommerce" />
             <div className="flex flex-col gap-6">
               <p className="text-base w-full xl:w-[80%]">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim
                 sint ab ullam, numquam nesciunt in.
               </p>
               <ul className="flex items-center gap-2">
-                <a
-                  href="https://www.youtube.com/@reactjsBD"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <li className="w-7 h-7 bg-primeColor text-gray-100 hover:text-white cursor-pointer text-lg rounded-full flex justify-center items-center hover:bg-black duration-300">
-                    <FaYoutube />
-                  </li>
-                </a>
-                <a
-                  href="https://github.com/noorjsdivs"
-                  target="_blank"
-                  rel="noreferrer"
-                >
+                <a href="#" target="_blank" rel="noreferrer">
                   <li className="w-7 h-7 bg-primeColor text-gray-100 hover:text-white cursor-pointer text-lg rounded-full flex justify-center items-center hover:bg-black duration-300">
                     <FaGithub />
                   </li>
                 </a>
-                <a
-                  href="https://www.facebook.com/Noorlalu143/"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <li className="w-7 h-7 bg-primeColor text-gray-100 hover:text-white cursor-pointer text-lg rounded-full flex justify-center items-center hover:bg-black duration-300">
-                    <FaFacebook />
-                  </li>
-                </a>
-                <a
-                  href="https://www.linkedin.com/in/noor-mohammad-ab2245193/"
-                  target="_blank"
-                  rel="noreferrer"
-                >
+                <a href="#" target="_blank" rel="noreferrer">
                   <li className="w-7 h-7 bg-primeColor text-gray-100 hover:text-white cursor-pointer text-lg rounded-full flex justify-center items-center hover:bg-black duration-300">
                     <FaLinkedin />
                   </li>
@@ -135,21 +110,17 @@ const Footer = () => {
           <div>
             <FooterListTitle title="Your account" />
             <ul className="flex flex-col gap-2">
-              <li className="font-titleFont text-base text-lightText hover:text-black hover:underline decoration-[1px] decoration-gray-500 underline-offset-2 cursor-pointer duration-300">
-                Profile
-              </li>
-              <li className="font-titleFont text-base text-lightText hover:text-black hover:underline decoration-[1px] decoration-gray-500 underline-offset-2 cursor-pointer duration-300">
-                Orders
-              </li>
-              <li className="font-titleFont text-base text-lightText hover:text-black hover:underline decoration-[1px] decoration-gray-500 underline-offset-2 cursor-pointer duration-300">
-                Addresses
-              </li>
-              <li className="font-titleFont text-base text-lightText hover:text-black hover:underline decoration-[1px] decoration-gray-500 underline-offset-2 cursor-pointer duration-300">
-                Account Details
-              </li>
-              <li className="font-titleFont text-base text-lightText hover:text-black hover:underline decoration-[1px] decoration-gray-500 underline-offset-2 cursor-pointer duration-300">
-                Payment Options
-              </li>
+              {accSidebarList.map(({ _id, title, link }) => {
+                return (
+                  <li
+                    key={_id}
+                    onClick={() => navigate(link)}
+                    className="font-titleFont text-base text-lightText hover:text-black hover:underline decoration-[1px] decoration-gray-500 underline-offset-2 cursor-pointer duration-300"
+                  >
+                    {title}
+                  </li>
+                );
+              })}
             </ul>
           </div>
           <div className="col-span-2 flex flex-col items-center w-full px-4">
