@@ -12,12 +12,17 @@ import { OrderStatus } from "src/database/entities/order/order_status.entity";
 import { Address } from "src/database/entities/address/address.entity";
 import { ShoppingCart } from "src/database/entities/cart/cart.entity";
 import { OrderLine } from "src/database/entities/order/order_line.entity";
-import { calcWithShippingPrice } from "src/common/helper/calcCart";
+import { calcDiscountAmount } from "src/common/helper/calcCart";
 import { StatusType } from "src/constants/status.constants";
 import { successObject } from "src/common/helper/sucess-response.interceptor";
+import { ConfigService } from "@nestjs/config";
+import Stripe from "stripe";
+import { CartService } from "src/api/cart/services/cart.service";
 
 @Injectable()
 export class OrderService {
+  private stripe: Stripe;
+
   constructor(
     @InjectRepository(ShopOrder)
     private readonly orderRepository: Repository<ShopOrder>,
@@ -25,8 +30,16 @@ export class OrderService {
     private readonly couponRepository: Repository<Coupon>,
     @InjectRepository(OrderStatus)
     private readonly statusRepository: Repository<OrderStatus>,
-    private readonly entityManager: EntityManager
-  ) {}
+    private readonly entityManager: EntityManager,
+    private readonly configService: ConfigService,
+    private readonly cartService: CartService
+  ) {
+    const stripeSecretKey = this.configService.get<string>("STRIPE_SECRET_KEY");
+    if (!stripeSecretKey) {
+      throw new Error("STRIPE_SECRET_KEY is not defined");
+    }
+    this.stripe = new Stripe(stripeSecretKey);
+  }
 
   async getOrder(id: number): Promise<ShopOrder> {
     const order: ShopOrder = await this.orderRepository.findOne({
@@ -39,7 +52,8 @@ export class OrderService {
         "shipping_address",
         "orderLines.product.product",
         "orderStatus",
-        "shippingMethod"
+        "shippingMethod",
+        "payment_method.paymentType"
       ],
     });
 
@@ -99,7 +113,7 @@ export class OrderService {
             where: { id: data.shipMethodId },
           }),
           transactionalEntityManager.findOneOrFail(OrderStatus, {
-            where: { status: "Pending" },
+            where: { status: StatusType.PREORDER },
           }),
           transactionalEntityManager.findOneOrFail(UserPaymentMethod, {
             where: { id: data.paymentMethodId },
@@ -135,12 +149,9 @@ export class OrderService {
           (total, orderLine) => total + orderLine.price,
           0
         );
-        const finalAmount = calcWithShippingPrice(
-          totalAmount,
-          cart.coupon,
-          shippingMethod
-        );
 
+        const discountAmount = calcDiscountAmount(totalAmount, cart.coupon);
+        const finalAmount = totalAmount - discountAmount + shippingMethod.price;
         // Create the ShopOrder entity
         const order = transactionalEntityManager.create(ShopOrder, {
           user,
@@ -149,7 +160,9 @@ export class OrderService {
           payment_method: paymentMethod,
           shipping_address: shippingAddress,
           coupon: cart.coupon,
-          order_total: finalAmount,
+          order_total: totalAmount,
+          discount_amount: discountAmount,
+          final_total: finalAmount,
         });
 
         // Save the ShopOrder entity
@@ -162,6 +175,28 @@ export class OrderService {
             return transactionalEntityManager.save(orderLine);
           })
         );
+        // Use Stripe to process payment
+        // Charge the customer using Stripe
+        const paymentIntent = await this.stripe.paymentIntents.create({
+          amount: Math.round(finalAmount * 100), // Stripe requires amount in cents
+          currency: "usd", // Adjust currency as needed
+          customer: user.stripeCustomerId, // Stripe customer ID
+          payment_method: paymentMethod.payment_method_id, // Stripe payment method ID
+          description: `Order #${savedOrder.id} Payment`,
+          confirm: true, // Confirm the payment intent immediately
+          return_url: this.configService.get<string>("RETURN_URL"), // Specify your return URL
+        });
+
+        await this.cartService.clearCart(user);
+        await this.cartService.removeCoupon(user);
+
+        // Update order status based on payment intent confirmation
+        if (paymentIntent.status === "succeeded") {
+          await transactionalEntityManager.save(savedOrder);
+        } else {
+          // Handle payment failure or pending status as needed
+          throw new NotFoundException("Payment processing failed.");
+        }
 
         return savedOrder;
       }

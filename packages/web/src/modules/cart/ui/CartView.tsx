@@ -43,7 +43,7 @@ const Cart: React.FC = () => {
           <div className="py-4">
             <Breadcrumbs title="Cart" prevLocation={prevLocation} />
           </div>
-          {data.items.length > 0 ? (
+          {data.items && data.items.length > 0 ? (
             <div className="pb-20">
               <div className="w-full h-20 bg-[#F5F7F7] text-black hidden lg:grid grid-cols-5 place-content-center px-6 text-lg font-titleFont font-semibold">
                 <h2 className="col-span-2">Product</h2>

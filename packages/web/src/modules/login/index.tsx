@@ -14,7 +14,7 @@ const LoginConnector: React.FC = () => {
   };
 
   const onFinish = () => {
-    navigate("/");
+    navigate("/account/edit");
     window.location.reload();
   };
 

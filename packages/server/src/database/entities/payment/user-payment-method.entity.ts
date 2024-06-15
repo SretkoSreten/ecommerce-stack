@@ -10,12 +10,18 @@ export class UserPaymentMethod {
 
   @Column()
   provider: string;
+  
+  @Column()
+  account_name?: string;
+
+  @Column({ unique: true, nullable: true }) // Stripe Customer ID can be nullable initially
+  payment_method_id: string;
 
   @Column()
-  account_number: number;
+  card_number?: string;
 
   @Column()
-  expiry_date: Date;
+  expiry_date?: string;
 
   @Column({ default: false })
   is_default: boolean;

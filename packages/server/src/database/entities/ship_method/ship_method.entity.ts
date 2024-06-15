@@ -9,7 +9,7 @@ export class ShippingMethod {
     @Column()
     name: string;
 
-    @Column()
+    @Column({ type: "decimal", precision: 10, scale: 2 })
     price: number;
     // You can add other attributes as needed
 

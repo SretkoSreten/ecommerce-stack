@@ -45,13 +45,3 @@ export function calcDiscountAmount(total: number, coupon: Coupon): number {
   // Ensure the discount total is rounded to 2 decimal places
   return Math.round(discountTotal * 100) / 100;
 }
-
-export function calcWithShippingPrice(
-  total: number,
-  coupon: Coupon,
-  shipping: ShippingMethod
-): number {
-  const discountTotal = coupon ? calcDiscountAmount(total, coupon) : 0;
-  const discountedTotal = total - discountTotal + shipping.price;
-  return Math.max(0, parseFloat(discountedTotal.toFixed(2)));
-}

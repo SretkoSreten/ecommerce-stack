@@ -24,6 +24,7 @@ import { DeleteAccountConnector } from "./modules/acc_delete";
 import { AccountOrdersConnector } from "./modules/acc_orders";
 import { OrderDetailsConnector } from "./modules/order_details";
 import { NotFoundConnector } from "./modules/notFound";
+import { AccountPayments } from "./modules/acc_payments";
 
 const Layout = () => {
   return (
@@ -74,6 +75,7 @@ function App() {
                   path="/account/orders/:id"
                   element={<OrderDetailsConnector />}
                 />
+                <Route path="/account/payments" element={<AccountPayments />} />
               </Route>
             </Route>
             <Route path="/home" element={<HomeView />} />

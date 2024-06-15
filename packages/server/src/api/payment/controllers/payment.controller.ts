@@ -19,6 +19,12 @@ export class PaymentController {
         return this.paymentService.getUserPayments(user);
     }
 
+    @Get(':id')
+    getPayment(@Param() params: FindOneParams) {
+        return this.paymentService.getPayment(params.id);
+    }
+
+
     @Auth(Roles.USER, Roles.ADMIN)
     @Post('create')
     addUserPayment(
@@ -38,11 +44,12 @@ export class PaymentController {
     }
 
     @Auth(Roles.USER, Roles.ADMIN)
-    @Patch('set-default/:id')
+    @Get('select/:id')
     setPaymentType(
+        @CurrentUser() user: User,
         @Param() {id}:any,
     ) {
-        return this.paymentService.setPaymentMethod(id);
+        return this.paymentService.selectPayment(user, id);
     }
 
     @Auth(Roles.USER, Roles.ADMIN)

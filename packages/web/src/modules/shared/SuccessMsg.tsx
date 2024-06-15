@@ -13,7 +13,7 @@ const SuccessMsg: React.FC<SuccessMsgProps> = ({ name, content }) => {
     >
       <span className="sr-only">Info</span>
       <div>
-        <span className="font-medium">{name}:</span> {content}
+        <span className="font-medium">{name} {content}</span> 
       </div>
     </div>
   );

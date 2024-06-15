@@ -58,8 +58,6 @@ export const OrderView = withFormik<any, any>({
 
   handleSubmit: async (values, { props, setErrors }) => {
     const errors: any = {};
-
-    console.log(values);
     // Validate shippingId
     if (values.shipMethodId == "null") {
       errors.shipMethodId = "Shipping option is required";

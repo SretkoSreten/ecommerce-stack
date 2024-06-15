@@ -77,6 +77,7 @@ export class ShopOrderSeeder {
             coupon,
             order_total: parseFloat(faker.finance.amount()),
             orderStatus,
+            delivery_date: faker.date.future()
         };
     }
 

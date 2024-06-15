@@ -143,6 +143,18 @@ export class CartService {
     return userCart;
   }
 
+  public async removeCoupon(user: User){
+    const cart = await this.cartRepository.findOne({ where: { user } });
+    if (!cart) {
+      throw new NotFoundException(
+        `Shopping cart not found for user with ID ${user.id}`
+      );
+    }
+    this.cartRepository.update({user}, {coupon: null})
+
+    return successObject;
+  }
+
   public async clearCart(user: User) {
     const cart = await this.cartRepository.findOne({ where: { user } });
     if (!cart) {

@@ -10,6 +10,10 @@ import { Address } from "src/database/entities/address/address.entity";
 import { ShippingMethod } from "src/database/entities/ship_method/ship_method.entity";
 import { UserPaymentMethod } from "src/database/entities/payment/user-payment-method.entity";
 import { OrderStatus } from "src/database/entities/order/order_status.entity";
+import { CartService } from "../cart/services/cart.service";
+import { ShoppingCart } from "src/database/entities/cart/cart.entity";
+import { ShoppingCartItem } from "src/database/entities/cart/cart_item.entity";
+import { ProductItem } from "src/database/entities/product/product_item.entity";
 
 @Module({
     imports: [
@@ -21,10 +25,13 @@ import { OrderStatus } from "src/database/entities/order/order_status.entity";
             Address, 
             ShippingMethod, 
             UserPaymentMethod, 
-            OrderStatus
+            OrderStatus,
+            ShoppingCart,
+            ShoppingCartItem,
+            ProductItem
         ])
     ],
     controllers: [OrderController],
-    providers: [OrderService]
+    providers: [OrderService, CartService]
 })
 export class OrderModule { }

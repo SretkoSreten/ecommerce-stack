@@ -11,13 +11,14 @@ export class PaymentTypeSeeder {
     private readonly entityManager: EntityManager,
   ) {}
 
+
   private generatePaymentTypeData(): Partial<PaymentType>[] {
     return [
-      { value: 'Credit Card' },
-      { value: 'Debit Card' },
-      { value: 'PayPal' },
-      { value: 'Bank Transfer' },
-      { value: 'Crypto' },
+      { value: 'Visa' },
+      { value: 'Mastercard' },
+      { value: 'American Express' },
+      { value: 'ACH Debit' },
+      { value: 'USD bank transfers' },
     ];
   }
 

@@ -15,7 +15,6 @@ import { UserPaymentMethod } from '../payment/user-payment-method.entity';
 import { ShoppingCart } from '../cart/cart.entity';
 import { ShopOrder } from '../order/order.entity';
 import { UserReview } from '../review/review.entity';
-import * as bcrypt from 'bcrypt';
 
 @Entity({ name: 'user', schema: 'public' })
 export class User {
@@ -27,6 +26,9 @@ export class User {
 
   @Column()
   password: string;
+
+  @Column({ unique: true, nullable: true }) // Stripe Customer ID can be nullable initially
+  stripeCustomerId: string;
 
   @Column({ nullable: true })
   phone: string;

@@ -15,7 +15,6 @@ import { AddressSeeder } from './seeders/address.seeder';
 import { PaymentType } from '../entities/payment/payment.entity';
 import { PaymentTypeSeeder } from './seeders/payment-type.seeder';
 import { UserPaymentMethod } from '../entities/payment/user-payment-method.entity';
-import { UserPaymentMethodSeeder } from './seeders/user-payment.seeder';
 import { Category } from '../entities/category/category.entity';
 import { Product } from '../entities/product/product.entity';
 import { CategorySeederSeeder } from './seeders/category.seeder';
@@ -76,7 +75,6 @@ import { UserReviewSeeder } from './seeders/review.seeder';
     CountrySeeder,
     AddressSeeder,
     PaymentTypeSeeder,
-    UserPaymentMethodSeeder,
     CategorySeederSeeder,
     ProductSeeder,
     ShoppingCartItemSeeder,
