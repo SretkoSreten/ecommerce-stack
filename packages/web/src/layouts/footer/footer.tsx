@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { FaFacebook, FaYoutube, FaLinkedin, FaGithub } from "react-icons/fa";
+import { FaLinkedin, FaGithub } from "react-icons/fa";
 import FooterListTitle from "./footerTitle";
 import paymentCard from "../../assets/images/payment.png";
 import Image from "../layout/Image";
@@ -65,7 +65,7 @@ const Footer = () => {
   };
 
   return (
-    <div className="w-full bg-[#F5F5F3] py-20 mt-20">
+    <div className="w-full bg-primaryBg py-20">
       {!loading && (
         <div className="max-w-container mx-auto grid grid-cols-1 md:grid-cols-2  xl:grid-cols-6 px-10 gap-10">
           <div className="col-span-2">

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createOrder, fetchOrders } from "../../actions/order.actions";
 import { OrderView } from "./ui/OrderView";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const setParamsFromSearch = (
   params: URLSearchParams,
@@ -16,13 +16,15 @@ const setParamsFromSearch = (
 };
 
 const OrderConnector: React.FC = () => {
+
+  const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams();
   const [address, setAddress] = useState<string | undefined>();
   const [payment, setPayment] = useState<string | undefined>();
   const [shipping, setShipping] = useState<string | undefined>();
 
   const dispatch = useDispatch();
-  const { loading, data } = useSelector((state: any) => state.order);
+  const { loading, data, creating } = useSelector((state: any) => state.order);
 
   useEffect(() => {
     dispatch<any>(fetchOrders());
@@ -66,30 +68,25 @@ const OrderConnector: React.FC = () => {
   if (!data) return;
 
   const handleSubmit = async (values: any): Promise<any> => {
-    await dispatch<any>(createOrder(values))
+    return await dispatch<any>(createOrder(values))
   };
 
-  const onError = () => {
-    const container = document.getElementById("shipping");
-    if (container) {
-      container.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-        inline: "start",
-      });
-    }
-  };
+  const onFinish = () => {
+    navigate('/account/orders');
+    window.location.reload();
+  }
 
   return (
     <div>
       {!loading && (
         <OrderView
           data={data}
+          creating={creating}
           paymentMethodId={payment}
           addressId={address}
           shippingId={shipping}
           submit={handleSubmit}
-          onError={onError}
+          onFinish={onFinish}
         />
       )}
     </div>

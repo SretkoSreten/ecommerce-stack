@@ -22,8 +22,6 @@ const EditAddressConnector: React.FC = () => {
     return await dispatch<any>(editAddress(id, values));
   };
 
-  console.log(data);
-
   return (
     <>
       {!loading && (

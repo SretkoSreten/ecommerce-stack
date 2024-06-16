@@ -28,7 +28,7 @@ const cartReducer = (state = initialState, action: any) => {
     case SET_COUPON_SUCCESS:
       return { ...state, coupon: action.payload };
     case GET_CART_FAILURE:
-      return { ...state, loading: false, data: action.payload };
+      return { ...state, loading: false, error: action.payload };
     case ADD_TO_CART:
       return { ...state, items: action.payload };
 

@@ -3,7 +3,7 @@ import { LoginView } from "./ui/LoginView";
 import { useNavigate } from "react-router-dom";
 import { FormValues } from "./dto/login.dto";
 import { useDispatch } from "react-redux";
-import { login } from "./actions";
+import { login } from "../../actions/auth.actions";
 
 const LoginConnector: React.FC = () => {
   const dispatch = useDispatch();

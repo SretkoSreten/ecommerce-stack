@@ -9,6 +9,7 @@ interface OrderViewProps {
   shippingId: string; // Add shippingId to the props interface
   submit: (values: any) => Promise<any>;
   onFinish: () => void;
+  creating: boolean;
 }
 
 const C: React.FC<OrderViewProps & FormikProps<any>> = ({
@@ -16,6 +17,7 @@ const C: React.FC<OrderViewProps & FormikProps<any>> = ({
   errors,
   handleSubmit,
   onFinish,
+  creating
 }: any) => {
   if (!data) return null;
 
@@ -38,6 +40,8 @@ const C: React.FC<OrderViewProps & FormikProps<any>> = ({
           />
           <RightSide
             data={data.cartData}
+            errors={errors}
+            creating={creating}
             shippingMethods={data.shippingMethods}
           />
         </div>
@@ -57,25 +61,35 @@ export const OrderView = withFormik<any, any>({
   }),
 
   handleSubmit: async (values, { props, setErrors }) => {
-    const errors: any = {};
+    const errorsObj: Record<string, string> = {};
+
     // Validate shippingId
-    if (values.shipMethodId == "null") {
-      errors.shipMethodId = "Shipping option is required";
+    if (values.shipMethodId === "null" || values.shipMethodId === "undefined") {
+      errorsObj.shipMethodId = "Shipping option is required";
     }
 
-    if (values.paymentMethodId == "null") {
-      errors.paymentMethodId = "Payment method is required";
+    // Validate paymentMethodId
+    if (
+      values.paymentMethodId === "null" ||
+      values.paymentMethodId === "undefined"
+    ) {
+      errorsObj.paymentMethodId = "Payment method is required";
     }
 
-    if (values.addressId == "null") {
-      errors.addressId = "Address is required";
+    // Validate addressId
+    if (values.addressId === "null" || values.addressId === "undefined") {
+      errorsObj.addressId = "Address is required";
     }
 
-    if (Object.keys(errors).length > 0) {
-      props.onError();
-      setErrors(errors);
+    if (Object.keys(errorsObj).length > 0) {
+      setErrors(errorsObj);
     } else {
-      await props.submit(values);
+      const errors = await props.submit(values);
+      if (errors) {
+        setErrors(errors);
+      } else {
+        props.onFinish();
+      }
     }
   },
 })(C);

@@ -32,7 +32,7 @@ export const clearCart = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      const { data } = await axios.get("/api/carts/user/items", {
+      const { data: {data} } = await axios.get("/api/carts/user", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -54,7 +54,7 @@ export const removeItemFromCart = (id: number) => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      const { data } = await axios.get("/api/carts/user/items", {
+      const { data: {data} } = await axios.get("/api/carts/user", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -80,7 +80,7 @@ export const increaseQuantity = (id: number) => {
         }
       );
 
-      const { data } = await axios.get("/api/carts/user/items", {
+      const { data: {data} } = await axios.get("/api/carts/user", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -102,9 +102,11 @@ export const decreaseQuantity = (id: number) => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      const { data } = await axios.get("/api/carts/user/items", {
+      const response = await axios.get("/api/carts/user", {
         headers: { Authorization: `Bearer ${token}` },
       });
+
+      const {data} = response.data;
 
       dispatch(getItemsSuccess(data));
       dispatch<any>(fetchLayout())

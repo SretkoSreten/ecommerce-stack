@@ -2,6 +2,8 @@ import axios from "axios";
 
 import { Dispatch } from "redux";
 import {
+  CREATE_ORDER_REQUEST,
+  CREATE_ORDER_SUCCESS,
   DELETE_PAYMENT_SUCCESS,
   GET_ACC_ORDERS_FAILURE,
   GET_ACC_ORDERS_REQUEST,
@@ -63,6 +65,14 @@ export const getOrderDetailsFailure = (error: string) => ({
   payload: error,
 });
 
+export const createOrderRequest = () => ({
+  type: CREATE_ORDER_REQUEST
+});
+
+export const createOrderSuccess = () => ({
+  type: CREATE_ORDER_SUCCESS
+});
+
 export const deletePayment = (id: number) => {
   return async (dispatch: Dispatch) => {
     try {
@@ -97,14 +107,11 @@ export const deletePayment = (id: number) => {
 
 export const createOrder = (values: any) => {
   return async (dispatch: Dispatch) => {
+    dispatch(createOrderRequest())
     const token = localStorage.getItem("token");
 
-    values.addressId = parseInt(values.addressId);
-    values.paymentMethodId = parseInt(values.paymentMethodId);
-    values.shipMethodId = parseInt(values.shipMethodId);
-
     const {
-      data: { message, isSuccess, errorCode, data },
+      data: { message, isSuccess, errorCode },
     }: any = await axios.post("/api/orders/create", values, {
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -112,6 +119,41 @@ export const createOrder = (values: any) => {
     if (!isSuccess) {
       return normalizeErrors({ message, errorCode });
     }
+
+    dispatch(createOrderSuccess())
+    return;
+  };
+};
+
+export const orderAgain = (id: number) => {
+  return async (dispatch: Dispatch) => {
+    const token = localStorage.getItem("token");
+    const {
+      data: { message, isSuccess, errorCode },
+    }: any = await axios.get(`/api/orders/order/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (!isSuccess) {
+      return normalizeErrors({ message, errorCode });
+    }
+
+    const [ordersResponse, statusResponse] = await Promise.all([
+      token
+        ? axios.get("/api/orders/user", {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+        : Promise.resolve({ data: null }),
+      axios.get(`/api/status`),
+    ]);
+
+    const orders = ordersResponse.data.data;
+    const status = statusResponse.data.data;
+
+    const data = { orders, status };
+
+    dispatch(getAccOrdersSuccess(data));
+    return;
   };
 };
 
@@ -188,38 +230,39 @@ export const cancelOrder = (id: number) => {
     try {
       const token = localStorage.getItem("token");
 
-      const [
-        cancelOrderResponse,
-        ordersResponse,
-        statusResponse,
-      ] = await Promise.all([
+      const [cancelOrderResponse] = await Promise.all([
         token
           ? axios.get(`/api/orders/cancel/${id}`, {
               headers: { Authorization: `Bearer ${token}` },
             })
           : Promise.resolve({ data: null }),
-        token
-          ? axios.get("/api/orders/user", {
-              headers: { Authorization: `Bearer ${token}` },
-            })
-          : Promise.resolve({ data: null }),
-        axios.get(`/api/status`),
       ]);
 
       const cancelOrder = cancelOrderResponse.data;
-      const orders = ordersResponse.data.data;
-      const status = statusResponse.data.data;
 
-      const data = { orders, status };
       if (cancelOrder.isSuccess) {
+        const [ordersResponse, statusResponse] = await Promise.all([
+          token
+            ? axios.get("/api/orders/user", {
+                headers: { Authorization: `Bearer ${token}` },
+              })
+            : Promise.resolve({ data: null }),
+          axios.get(`/api/status`),
+        ]);
+
+        const orders = ordersResponse.data.data;
+        const status = statusResponse.data.data;
+
+        const data = { orders, status };
+
         dispatch(getAccOrdersSuccess(data));
+        return;
       }
 
       return;
     } catch (error) {}
   };
 };
-
 
 export const fetchOrder = (id: string) => {
   return async (dispatch: Dispatch) => {

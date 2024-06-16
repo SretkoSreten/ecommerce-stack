@@ -11,11 +11,7 @@ export const LeftSide = () => {
   }, [location.pathname]);
 
   return (
-    <aside
-      id="default-sidebar"
-      className="z-40 min-w-96 transition-transform -translate-x-full sm:translate-x-0"
-      aria-label="Sidebar"
-    >
+    <aside className="z-40 md:min-w-96">
       <div className="py-4 space-y-4 overflow-y-auto">
         <div className="space-y-4">
           <h2 className="font-medium">Manage My Account</h2>

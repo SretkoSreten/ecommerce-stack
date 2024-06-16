@@ -47,11 +47,3 @@ export function calcTotalPrice({ items, coupon, delivery }: Cart): number {
 
   return discountedTotal > 0 ? parseFloat(discountedTotal.toFixed(2)) : 0;
 }
-
-
-export function calcWithShippingPrice({ items, coupon }: Cart, shippingPrice: number): number {
-  const total = subtractPrice({ items });
-  const discountTotal = coupon ? calcDiscountAmount({ items, coupon }) : 0;
-  const discountedTotal = total - discountTotal + shippingPrice;
-  return Math.max(0, parseFloat(discountedTotal.toFixed(2)));
-}

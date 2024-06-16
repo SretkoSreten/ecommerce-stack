@@ -8,7 +8,6 @@ export const C: React.FC<FormikProps<FormValues> & Props> = ({
   errors,
   creating,
 }: any) => {
-  console.log(errors);
   return (
     <Form className="mx-auto w-full">
       {errors && errors.message && <ErrorMsg content={errors.message} />}

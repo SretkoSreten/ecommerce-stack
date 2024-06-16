@@ -1,9 +1,11 @@
 import { OrderBottom } from "../../../components/order/OrderBottom";
 import { OrderItem } from "../../../components/order/OrderItem";
+import ErrorMsg from "../../shared/ErrorMsg";
 
-export const RightSide = ({ data, shippingMethods }: any) => {
+export const RightSide = ({ data, errors, shippingMethods, creating }: any) => {
   return (
     <div>
+      {errors.message && <ErrorMsg content={errors.message} />}
       <table className="text-left font-medium text-gray-900">
         <tbody className="divide-y divide-gray-200">
           {data &&
@@ -13,7 +15,11 @@ export const RightSide = ({ data, shippingMethods }: any) => {
             })}
         </tbody>
       </table>
-      <OrderBottom data={data} shippingMethods={shippingMethods} />
+      <OrderBottom
+        data={data}
+        creating={creating}
+        shippingMethods={shippingMethods}
+      />
     </div>
   );
 };

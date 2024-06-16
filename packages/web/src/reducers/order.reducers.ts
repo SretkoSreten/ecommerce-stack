@@ -1,6 +1,8 @@
 // productReducer.ts
 
 import {
+  CREATE_ORDER_REQUEST,
+  CREATE_ORDER_SUCCESS,
   DELETE_PAYMENT_SUCCESS,
   GET_ACC_ORDERS_FAILURE,
   GET_ACC_ORDERS_REQUEST,
@@ -10,37 +12,47 @@ import {
   GET_ORDER_DETAILS_SUCCESS,
   GET_ORDER_FAILURE,
   GET_ORDER_REQUEST,
-  GET_ORDER_SUCCESS
+  GET_ORDER_SUCCESS,
 } from "../constants/actions.constants";
 
 interface OrderState {
   loading: boolean;
   data: any;
   error: string | null;
+  creating?: boolean;
 }
 
 const initialState: OrderState = {
   loading: false,
   data: null,
-  error: null
+  error: null,
+  creating: false,
 };
-
 
 const accInitialState: OrderState = {
   loading: false,
   data: null,
-  error: null
+  error: null,
 };
-
 
 const orderDetailsState: OrderState = {
   loading: false,
   data: null,
-  error: null
+  error: null,
 };
 
 const orderReducer = (state = initialState, action: any): OrderState => {
   switch (action.type) {
+    case CREATE_ORDER_REQUEST:
+      return {
+        ...state,
+        creating: true,
+      };
+    case CREATE_ORDER_SUCCESS:
+      return {
+        ...state,
+        creating: false,
+      };
     case GET_ORDER_REQUEST:
       return {
         ...state,
@@ -95,7 +107,10 @@ const accOrdersReducer = (state = accInitialState, action: any): OrderState => {
   }
 };
 
-const orderDetailsReducer = (state = orderDetailsState, action: any): OrderState => {
+const orderDetailsReducer = (
+  state = orderDetailsState,
+  action: any
+): OrderState => {
   switch (action.type) {
     case GET_ORDER_DETAILS_REQUEST:
       return {

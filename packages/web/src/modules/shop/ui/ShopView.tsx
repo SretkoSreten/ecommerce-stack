@@ -5,15 +5,17 @@ import ShopSideNav from "../../../components/shop/ShopSideNav";
 
 const Shop = () => {
   return (
-    <div className="max-w-container px-10 mx-auto">
-      <Breadcrumbs title="Products" prevLocation="" />
+    <div className="max-w-container p-10 mx-auto">
+      <div className="py-4">
+        <Breadcrumbs title="Products" prevLocation="" />
+      </div>
       {/* ================= Products Start here =================== */}
-      <div className="w-full h-full flex pb-20 gap-10">
-        <div className="w-[20%] lg:w-[25%] hidden md:inline-flex h-full">
+      <div className="w-full flex lg:flex-row flex-col gap-10">
+        <div className="lg:w-[25%] w-full md:inline-flex h-full">
           <ShopSideNav />
         </div>
 
-        <div className="w-full md:w-[80%] lg:w-[75%] h-full flex flex-col gap-10">
+        <div className="lg:w-[80%] w-full flex flex-col gap-10">
           <ProductBanner />
           <Pagination />
         </div>

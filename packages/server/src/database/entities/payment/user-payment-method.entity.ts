@@ -26,7 +26,7 @@ export class UserPaymentMethod {
   @Column({ default: false })
   is_default: boolean;
 
-  @ManyToOne(() => User, user => user.paymentMethods, { nullable: false, onUpdate: 'NO ACTION' })
+  @ManyToOne(() => User, user => user.paymentMethods, { nullable: false, onUpdate: 'NO ACTION', onDelete: 'CASCADE' })
   user: User;
 
   @ManyToOne(() => PaymentType, paymentType => paymentType.userPaymentMethods, { nullable: true, onUpdate: 'NO ACTION', onDelete: 'SET NULL' })

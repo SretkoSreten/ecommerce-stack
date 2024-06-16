@@ -14,6 +14,7 @@ import { CartService } from "../cart/services/cart.service";
 import { ShoppingCart } from "src/database/entities/cart/cart.entity";
 import { ShoppingCartItem } from "src/database/entities/cart/cart_item.entity";
 import { ProductItem } from "src/database/entities/product/product_item.entity";
+import { OrderLine } from "src/database/entities/order/order_line.entity";
 
 @Module({
     imports: [
@@ -28,7 +29,8 @@ import { ProductItem } from "src/database/entities/product/product_item.entity";
             OrderStatus,
             ShoppingCart,
             ShoppingCartItem,
-            ProductItem
+            ProductItem,
+            OrderLine
         ])
     ],
     controllers: [OrderController],

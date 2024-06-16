@@ -8,9 +8,9 @@ export const C: React.FC<FormikProps<FormValues> & Props> = ({
   errors,
 }: any) => {
   return (
-    <div className="flex flex-col items-center bg-[#F5F5F3] justify-center mx-auto">
-      <div className="w-full rounded-lg shadow bg-white sm:max-w-md my-10 xl:p-0">
-        <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+    <div className="flex flex-col items-center md:bg-primaryBg bg-white justify-center mx-auto">
+      <div className="w-full rounded-lg md:shadow bg-white md:max-w-md md:my-10 my-4 xl:p-0">
+        <div className="md:px-6 px-10 py-6 space-y-4">
           <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
             Sign up
           </h1>

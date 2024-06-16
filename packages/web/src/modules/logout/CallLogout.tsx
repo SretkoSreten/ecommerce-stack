@@ -2,14 +2,12 @@ import React, { useEffect } from "react";
 
 interface Props {
   logout: () => void;
-  onFinish: () => void;
 }
 
-export const CallLogout: React.FC<Props> = ({ logout, onFinish }) => {
+export const CallLogout: React.FC<Props> = ({ logout }) => {
   useEffect(() => {
     const handleLogout = async () => {
       await logout();
-      onFinish();
     };
 
     handleLogout();
@@ -18,7 +16,7 @@ export const CallLogout: React.FC<Props> = ({ logout, onFinish }) => {
     return () => {
       // Add any cleanup logic here if needed
     };
-  }, [logout, onFinish]);
+  }, [logout]);
 
   // This component doesn't render anything
   return null;

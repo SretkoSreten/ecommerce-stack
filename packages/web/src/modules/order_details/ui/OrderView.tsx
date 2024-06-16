@@ -15,7 +15,6 @@ export const OrderView: React.FC<any> = (props) => {
     final_total
   } = props;
 
-
   return (
     <div className="w-full max-w-container mx-auto">
       <h2 className="font-manrope font-bold text-2xl leading-10 text-black">
@@ -103,7 +102,7 @@ export const OrderView: React.FC<any> = (props) => {
               Shipping Charge
             </p>
             <p className="font-semibold text-lg leading-8 text-gray-900">
-              -${shippingMethod.price}
+              +${shippingMethod.price}
             </p>
           </div>
           <div className="flex items-center justify-between">
@@ -111,7 +110,7 @@ export const OrderView: React.FC<any> = (props) => {
               Discount
             </p>
             <p className="font-semibold text-lg leading-8 text-gray-900">
-              ${discount_amount}
+              -${discount_amount}
             </p>
           </div>
           <div className="flex items-center justify-between py-6 border-y border-gray-100">

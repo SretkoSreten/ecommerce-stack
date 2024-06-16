@@ -14,6 +14,7 @@ import { RoleService } from "src/api/role/services/role.service";
 import { Roles } from "src/api/role/role.enum";
 import { User } from "src/database/entities/user/user.entity";
 import { CartService } from "src/api/cart/services/cart.service";
+import { successObject } from "src/common/helper/sucess-response.interceptor";
 
 @Injectable()
 export class AuthService {
@@ -43,7 +44,7 @@ export class AuthService {
 
     const token = await this.generateToken({
       id: alreadyExistingUser.id,
-      email,
+      email
     });
 
     return token;
@@ -66,7 +67,7 @@ export class AuthService {
 
     await this.cartService.createCart(user);
 
-    return { message: "success" };
+    return successObject;
   }
 
   async verifyToken(payload: VerifyPayloadDto) {

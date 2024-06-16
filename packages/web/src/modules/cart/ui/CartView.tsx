@@ -22,9 +22,8 @@ const Cart: React.FC = () => {
   useEffect(() => {
     dispatch<any>(fetchCart());
     setPrevLocation(location.pathname);
-  }, [dispatch, location.pathname]);
+  }, []);
 
-  if (!data) return;
 
   const total = subtractPrice(data);
 
@@ -36,22 +35,19 @@ const Cart: React.FC = () => {
     dispatch<any>(fetchCart());
   }
 
+  if (!data) return;
+
+
   return (
-    <div className="max-w-container px-10 mx-auto">
+    <div className="max-w-container p-10 mx-auto">
       {!loading && (
         <>
           <div className="py-4">
             <Breadcrumbs title="Cart" prevLocation={prevLocation} />
           </div>
           {data.items && data.items.length > 0 ? (
-            <div className="pb-20">
-              <div className="w-full h-20 bg-[#F5F7F7] text-black hidden lg:grid grid-cols-5 place-content-center px-6 text-lg font-titleFont font-semibold">
-                <h2 className="col-span-2">Product</h2>
-                <h2>Price</h2>
-                <h2>Quantity</h2>
-                <h2>Sub Total</h2>
-              </div>
-              <div className="mt-5">
+            <div>
+              <div className="my-5">
                 {data.items.map((item: any) => (
                   <ItemCard key={item.id} item={item} />
                 ))}

@@ -39,6 +39,15 @@ export class OrderController {
     }
 
     @Auth(Roles.USER, Roles.ADMIN)
+    @Get('order/:id')
+    async orderAgain(
+        @CurrentUser() user: User,
+        @Param() params: any
+    ){
+        return this.orderService.orderAgain(user, params.id);
+    }
+
+    @Auth(Roles.USER, Roles.ADMIN)
     @Put('coupon-apply/:id')
     async applyCoupon(
         @Param() params: any,

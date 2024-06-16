@@ -9,12 +9,22 @@ import { errorMessages } from "src/errors/custom";
 import { UpdateUserAuthBody } from "../dto/update-user.dto";
 import { successObject } from "src/common/helper/sucess-response.interceptor";
 import * as bcrypt from "bcrypt";
+import Stripe from "stripe";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class UserService {
+  private stripe: Stripe;
   constructor(
-    @InjectRepository(User) private readonly repository: Repository<User>
-  ) {}
+    @InjectRepository(User) private readonly repository: Repository<User>,
+    private readonly configService: ConfigService
+  ) {
+    const stripeSecretKey = this.configService.get<string>("STRIPE_SECRET_KEY");
+    if (!stripeSecretKey) {
+      throw new Error("STRIPE_SECRET_KEY is not defined");
+    }
+    this.stripe = new Stripe(stripeSecretKey);
+  }
 
   public async createUser(
     body: CreateUserDto,
@@ -66,11 +76,29 @@ export class UserService {
   }
 
   public async deleteAccount(user: User) {
+    // Find the user in the local database
     const userFound = await this.repository.findOne({ where: { id: user.id } });
+  
+    // Throw a NotFoundException if the user is not found
     if (!userFound) {
       throw new NotFoundException(errorMessages.user.notFound);
     }
-    await this.repository.remove(userFound);
+  
+    try {
+
+      const customer = await this.stripe.customers.retrieve(userFound.stripeCustomerId);
+      if (!customer) {
+        throw new Error('Customer not found in Stripe');
+      }
+  
+      const deletedCustomer = await this.stripe.customers.del(userFound.stripeCustomerId);
+      console.log('Customer deleted successfully:', deletedCustomer);
+      return successObject;
+    } catch (error) {
+      // Handle any errors that occur during Stripe deletion
+      console.error('Error deleting Stripe account:', error);
+      throw new Error('Failed to delete Stripe account');
+    }
   }
 
   public async findByName(name: string): Promise<User> {

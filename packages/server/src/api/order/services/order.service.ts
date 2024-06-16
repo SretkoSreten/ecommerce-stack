@@ -26,6 +26,8 @@ export class OrderService {
   constructor(
     @InjectRepository(ShopOrder)
     private readonly orderRepository: Repository<ShopOrder>,
+    @InjectRepository(OrderLine)
+    private readonly orderLineRepository: Repository<OrderLine>,
     @InjectRepository(Coupon)
     private readonly couponRepository: Repository<Coupon>,
     @InjectRepository(OrderStatus)
@@ -41,6 +43,63 @@ export class OrderService {
     this.stripe = new Stripe(stripeSecretKey);
   }
 
+  async orderAgain(user: User, id: number) {
+    // Retrieve the existing order by its ID
+    const order = await this.orderRepository.findOne({
+      where: { id },
+      relations: [
+        "orderLines",
+        "shipping_address",
+        "shippingMethod",
+        "payment_method",
+        "orderLines.product",
+        "orderLines.order",
+      ],
+    });
+
+    // Throw an exception if the order is not found
+    if (!order) {
+      throw new NotFoundException(errorMessages.order.notFound);
+    }
+
+    // Retrieve the status for the new order
+    const status = await this.statusRepository.findOne({
+      where: { status: StatusType.PREORDER },
+    });
+
+    // Create a new order object
+    const newOrder = this.orderRepository.create({
+      final_total: order.final_total,
+      discount_amount: order.discount_amount,
+      order_total: order.order_total,
+      delivery_date: order.delivery_date,
+      user, // Associate the new order with the user
+      orderStatus: status, // Update the status for the new order
+      shipping_address: order.shipping_address,
+      shippingMethod: order.shippingMethod,
+      payment_method: order.payment_method,
+      coupon: order.coupon,
+    });
+
+    // Save the new order to the repository first to get a valid new order ID
+    await this.orderRepository.save(newOrder);
+
+    // Map and create new order lines, ensuring to use the newOrder.id
+    for (const item of order.orderLines) {
+      const newItem = this.orderLineRepository.create({
+        ...item,
+        id: undefined, // Ensure new IDs are generated for order items
+        order: newOrder, // Associate the newItem with the newOrder
+      });
+      await this.orderLineRepository.save(newItem);
+    }
+
+    // Save the new order to the repository first to get a valid new order ID
+    await this.orderRepository.save(newOrder);
+
+    return newOrder;
+  }
+
   async getOrder(id: number): Promise<ShopOrder> {
     const order: ShopOrder = await this.orderRepository.findOne({
       where: { id },
@@ -53,7 +112,7 @@ export class OrderService {
         "orderLines.product.product",
         "orderStatus",
         "shippingMethod",
-        "payment_method.paymentType"
+        "payment_method.paymentType",
       ],
     });
 
@@ -76,17 +135,26 @@ export class OrderService {
         orders = await this.orderRepository.find({
           where: { user, orderStatus },
           relations: ["coupon", "orderLines", "orderStatus"],
+          order: {
+            order_date: "DESC", // Sort by createdAt field in descending order
+          },
         });
       } else {
         orders = await this.orderRepository.find({
           where: { user },
           relations: ["coupon", "orderLines", "orderStatus"],
+          order: {
+            order_date: "DESC", // Sort by createdAt field in descending order
+          },
         });
       }
     } else {
       orders = await this.orderRepository.find({
         where: { user },
         relations: ["coupon", "orderLines", "orderStatus"],
+        order: {
+          order_date: "DESC", // Sort by createdAt field in descending order
+        },
       });
     }
 
@@ -101,106 +169,89 @@ export class OrderService {
     return successObject;
   }
 
-  public async createOrder(
-    user: User,
-    data: CreateOrderDto
-  ): Promise<ShopOrder> {
-    return await this.entityManager.transaction(
-      async (transactionalEntityManager) => {
-        // Find the shipping method, order status, and payment method
-        const [shippingMethod, orderStatus, paymentMethod] = await Promise.all([
-          transactionalEntityManager.findOneOrFail(ShippingMethod, {
-            where: { id: data.shipMethodId },
-          }),
-          transactionalEntityManager.findOneOrFail(OrderStatus, {
-            where: { status: StatusType.PREORDER },
-          }),
-          transactionalEntityManager.findOneOrFail(UserPaymentMethod, {
-            where: { id: data.paymentMethodId },
-          }),
-        ]);
-
-        // Create the shipping address
-        const shippingAddress = await this.createAddress(
-          transactionalEntityManager,
-          data.addressId
-        );
-
-        // Find the user's shopping cart
-        const cart = await transactionalEntityManager.findOneOrFail(
-          ShoppingCart,
-          {
-            where: { user },
-            relations: ["items", "coupon", "items.productItem"],
-          }
-        );
-
-        // Create and save the order lines
-        const orderLines = cart.items.map((cartItem) => {
-          return transactionalEntityManager.create(OrderLine, {
-            product: cartItem.productItem,
-            quantity: cartItem.qty,
-            price: cartItem.productItem.price * cartItem.qty,
-          });
-        });
-
-        // Calculate total amount based on order lines and apply coupon
-        const totalAmount = orderLines.reduce(
-          (total, orderLine) => total + orderLine.price,
-          0
-        );
-
-        const discountAmount = calcDiscountAmount(totalAmount, cart.coupon);
-        const finalAmount = totalAmount - discountAmount + shippingMethod.price;
-        // Create the ShopOrder entity
-        const order = transactionalEntityManager.create(ShopOrder, {
-          user,
-          shippingMethod,
-          orderStatus,
-          payment_method: paymentMethod,
-          shipping_address: shippingAddress,
-          coupon: cart.coupon,
-          order_total: totalAmount,
-          discount_amount: discountAmount,
-          final_total: finalAmount,
-        });
-
-        // Save the ShopOrder entity
-        const savedOrder = await transactionalEntityManager.save(order);
-
-        // Associate order lines with the saved order
-        await Promise.all(
-          orderLines.map((orderLine) => {
-            orderLine.order = savedOrder;
-            return transactionalEntityManager.save(orderLine);
-          })
-        );
-        // Use Stripe to process payment
-        // Charge the customer using Stripe
-        const paymentIntent = await this.stripe.paymentIntents.create({
-          amount: Math.round(finalAmount * 100), // Stripe requires amount in cents
-          currency: "usd", // Adjust currency as needed
-          customer: user.stripeCustomerId, // Stripe customer ID
-          payment_method: paymentMethod.payment_method_id, // Stripe payment method ID
-          description: `Order #${savedOrder.id} Payment`,
-          confirm: true, // Confirm the payment intent immediately
-          return_url: this.configService.get<string>("RETURN_URL"), // Specify your return URL
-        });
-
-        await this.cartService.clearCart(user);
-        await this.cartService.removeCoupon(user);
-
-        // Update order status based on payment intent confirmation
-        if (paymentIntent.status === "succeeded") {
-          await transactionalEntityManager.save(savedOrder);
-        } else {
-          // Handle payment failure or pending status as needed
-          throw new NotFoundException("Payment processing failed.");
-        }
-
-        return savedOrder;
+  public async createOrder(user: User, data: CreateOrderDto): Promise<ShopOrder> {
+    return this.entityManager.transaction(async (transactionalEntityManager) => {
+      // Find the necessary entities
+      const [shippingMethod, orderStatus, paymentMethod] = await Promise.all([
+        transactionalEntityManager.findOneOrFail(ShippingMethod, { where: { id: data.shipMethodId } }),
+        transactionalEntityManager.findOneOrFail(OrderStatus, { where: { status: StatusType.PREORDER } }),
+        transactionalEntityManager.findOneOrFail(UserPaymentMethod, { where: { id: data.paymentMethodId } }),
+      ]);
+  
+      if (!paymentMethod.payment_method_id) {
+        throw new NotFoundException("Valid payment method is required.");
       }
-    );
+  
+      const shippingAddress = await this.createAddress(transactionalEntityManager, data.addressId);
+  
+      const cart = await transactionalEntityManager.findOneOrFail(ShoppingCart, {
+        where: { user },
+        relations: ["items", "coupon", "items.productItem"],
+      });
+  
+      // Create order lines and calculate totals
+      const orderLines = cart.items.map(cartItem =>
+        transactionalEntityManager.create(OrderLine, {
+          product: cartItem.productItem,
+          qty: cartItem.qty,
+          price: cartItem.productItem.price * cartItem.qty,
+        })
+      );
+  
+      const totalAmount = orderLines.reduce((total, orderLine) => total + orderLine.price, 0);
+      const discountAmount = calcDiscountAmount(totalAmount, cart.coupon);
+
+      if (isNaN(totalAmount) || isNaN(discountAmount) || isNaN(shippingMethod.price)) {
+        throw new Error("Invalid calculation for total amount, discount, or shipping price.");
+      }
+  
+      const finalAmount = totalAmount - discountAmount + parseFloat(shippingMethod.price.toString());
+  
+      if (isNaN(finalAmount)) {
+        throw new Error("Invalid final amount calculation.");
+      }
+  
+      // Create and save the order
+      const order = transactionalEntityManager.create(ShopOrder, {
+        user,
+        shippingMethod,
+        orderStatus,
+        payment_method: paymentMethod,
+        shipping_address: shippingAddress,
+        coupon: cart.coupon,
+        order_total: totalAmount,
+        discount_amount: discountAmount,
+        final_total: finalAmount,
+      });
+  
+      const savedOrder = await transactionalEntityManager.save(order);
+  
+      // Save order lines with the associated order
+      await Promise.all(orderLines.map(orderLine => {
+        orderLine.order = savedOrder;
+        return transactionalEntityManager.save(orderLine);
+      }));
+  
+      // Process payment with Stripe
+      const paymentIntent = await this.stripe.paymentIntents.create({
+        amount: Math.round(finalAmount * 100), // Stripe requires amount in cents
+        currency: "usd",
+        customer: user.stripeCustomerId,
+        payment_method: paymentMethod.payment_method_id,
+        description: `Order #${savedOrder.id} Payment`,
+        confirm: true,
+        return_url: this.configService.get<string>("RETURN_URL"),
+      });
+  
+      await this.cartService.clearCart(user);
+      await this.cartService.removeCoupon(user);
+  
+      if (paymentIntent.status !== "succeeded") {
+        throw new NotFoundException("Payment processing failed.");
+      }
+  
+      return savedOrder;
+    });
   }
 
   private async createAddress(

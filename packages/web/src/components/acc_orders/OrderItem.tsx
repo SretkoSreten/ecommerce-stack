@@ -1,7 +1,7 @@
 import React from "react";
 import moment from "moment";
 import { useDispatch } from "react-redux";
-import { cancelOrder } from "../../actions/order.actions";
+import { cancelOrder, orderAgain } from "../../actions/order.actions";
 import { StatusType } from "../../constants/status.constants";
 import { Link } from "react-router-dom";
 
@@ -13,9 +13,13 @@ export const OrderItem: React.FC<any> = (props) => {
     dispatch<any>(cancelOrder(id));
   };
 
+  const handleOrder = () => {
+    dispatch<any>(orderAgain(id))
+  }
+
   return (
-    <div className="divide-y divide-gray-200 dark:divide-gray-700">
-      <div className="flex flex-wrap items-center gap-y-4 py-6">
+    <div className="divide-y divide-gray-200">
+      <div className="flex flex-wrap gap-4 items-center gap-y-4 py-6">
         <dl className="w-1/2 sm:w-1/4 lg:w-auto lg:flex-1">
           <dt className="text-base font-medium text-gray-500">Order ID:</dt>
           <dd className="mt-1.5 text-base font-semibold text-gray-900">
@@ -46,7 +50,7 @@ export const OrderItem: React.FC<any> = (props) => {
             )}
           </dd>
         </dl>
-        <dl className="w-1/2 sm:w-1/4 lg:w-auto lg:flex-1">
+        <dl className="lg:w-auto lg:flex-1">
           <dt className="text-base font-medium text-gray-500">Status:</dt>
           {orderStatus.status == StatusType.PREORDER && (
             <dd className="me-2 mt-1.5 inline-flex items-center rounded bg-blue-600 px-2.5 py-0.5 text-xs font-medium text-white">
@@ -137,7 +141,7 @@ export const OrderItem: React.FC<any> = (props) => {
             </dd>
           )}
         </dl>
-        <div className="w-full grid sm:grid-cols-2 lg:flex lg:w-64 lg:items-center lg:justify-end gap-4">
+        <div className="w-full grid sm:grid-cols-2 lg:flex lg:max-w-64 lg:items-center lg:justify-end gap-4">
           {orderStatus.status != StatusType.CANCELLED ? (
             <button
               type="button"
@@ -149,6 +153,7 @@ export const OrderItem: React.FC<any> = (props) => {
           ) : (
             <button
               type="button"
+              onClick={() => handleOrder()}
               className="w-full rounded-lg bg-black px-3 py-2 text-sm font-medium text-white lg:w-auto"
             >
               Order again

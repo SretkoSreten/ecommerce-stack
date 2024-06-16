@@ -11,14 +11,13 @@ import { HiMenuAlt2 } from "react-icons/hi";
 import { motion } from "framer-motion";
 import { navBarList } from "../../constants";
 import Flex from "../layout/Flex";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 const Header = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const dispatch = useDispatch();
-  const { loading, data } = useSelector((state: any) => state.layout);
+  const { data } = useSelector((state: any) => state.layout);
 
   const [showMenu, setShowMenu] = useState(true);
   const [sidenav, setSidenav] = useState(false);
@@ -153,6 +152,7 @@ const Header = () => {
                         Shop by Category{" "}
                         <span className="text-lg">{category ? "-" : "+"}</span>
                       </h1>
+
                       {category && (
                         <motion.ul
                           initial={{ y: 15, opacity: 0 }}
@@ -173,6 +173,59 @@ const Header = () => {
                           })}
                         </motion.ul>
                       )}
+                      <div className="pt-4">
+                        {data.auth && data.auth.isSuccess ? (
+                          <ul className="text-gray-200 flex flex-col gap-2">
+                            <li className="font-normal hover:font-bold items-center text-lg text-gray-200 hover:underline underline-offset-[4px] decoration-[1px] hover:text-white md:border-r-[2px] border-r-gray-300 hoverEffect last:border-r-0">
+                              <NavLink
+                                to="/login"
+                                state={{
+                                  data: location.pathname.split("/")[1],
+                                }}
+                                onClick={() => setSidenav(false)}
+                              >
+                                Login
+                              </NavLink>
+                            </li>
+                            <li className="font-normal hover:font-bold items-center text-lg text-gray-200 hover:underline underline-offset-[4px] decoration-[1px] hover:text-white md:border-r-[2px] border-r-gray-300 hoverEffect last:border-r-0">
+                              <NavLink
+                                to="/register"
+                                state={{
+                                  data: location.pathname.split("/")[1],
+                                }}
+                                onClick={() => setSidenav(false)}
+                              >
+                                Register
+                              </NavLink>
+                            </li>
+                          </ul>
+                        ) : (
+                          <ul className="text-gray-200 flex flex-col gap-2">
+                            <li className="font-normal hover:font-bold items-center text-lg text-gray-200 hover:underline underline-offset-[4px] decoration-[1px] hover:text-white md:border-r-[2px] border-r-gray-300 hoverEffect last:border-r-0">
+                              <NavLink
+                                to="/account/edit"
+                                state={{
+                                  data: location.pathname.split("/")[1],
+                                }}
+                                onClick={() => setSidenav(false)}
+                              >
+                                Account
+                              </NavLink>
+                            </li>
+                            <li className="font-normal hover:font-bold items-center text-lg text-gray-200 hover:underline underline-offset-[4px] decoration-[1px] hover:text-white md:border-r-[2px] border-r-gray-300 hoverEffect last:border-r-0">
+                              <NavLink
+                                to="/logout"
+                                state={{
+                                  data: location.pathname.split("/")[1],
+                                }}
+                                onClick={() => setSidenav(false)}
+                              >
+                                Logout
+                              </NavLink>
+                            </li>
+                          </ul>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <span

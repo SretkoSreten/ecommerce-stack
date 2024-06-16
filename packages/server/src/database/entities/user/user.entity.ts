@@ -56,18 +56,18 @@ export class User {
   })
   roles: Role[]
 
-  @OneToMany(() => UserAddress, userAddress => userAddress.user, { onDelete: 'CASCADE' })
+  @OneToMany(() => UserAddress, userAddress => userAddress.user)
   userAddresses: UserAddress[];
 
-  @OneToMany(() => UserPaymentMethod, paymentMethod => paymentMethod.user, { onDelete: 'CASCADE' })
+  @OneToMany(() => UserPaymentMethod, paymentMethod => paymentMethod.user)
   paymentMethods: UserPaymentMethod[];
 
-  @OneToMany(() => ShoppingCart, shoppingCart => shoppingCart.user, { onDelete: 'CASCADE' })
+  @OneToMany(() => ShoppingCart, shoppingCart => shoppingCart.user)
   shoppingCarts: ShoppingCart[];
 
-  @OneToMany(() => ShopOrder, order => order.user, { onDelete: 'CASCADE' })
+  @OneToMany(() => ShopOrder, order => order.user)
   orders: ShopOrder[];
 
-  @OneToMany(() => UserReview, review => review.user, { onDelete: 'CASCADE' })
+  @OneToMany(() => UserReview, review => review.user)
   reviews: UserReview[];
 }

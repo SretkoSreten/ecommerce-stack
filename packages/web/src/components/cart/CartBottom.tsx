@@ -80,3 +80,5 @@ export const CartBottom: React.FC<any> = ({ data }) => {
     </div>
   );
 };
+
+

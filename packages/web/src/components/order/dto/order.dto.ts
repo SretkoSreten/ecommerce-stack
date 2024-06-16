@@ -1,5 +1,6 @@
 export interface OrderBottomProps {
   data: any;
+  creating: boolean;
   shippingMethods: { id: string; price: number }[];
 }
 

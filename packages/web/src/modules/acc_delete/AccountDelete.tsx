@@ -11,7 +11,7 @@ export const CallDelete: React.FC<Props> = ({ deleteAccount }) => {
 
   return (
     <div>
-      <div className="fixed top-1/2 -translate-x-2/4 -translate-y-2/4	 left-1/2 z-50">
+      <div className="fixed sm:w-auto w-full top-1/2 -translate-x-2/4 -translate-y-2/4	left-1/2 z-50">
         <div className="relative p-4 w-full max-w-md max-h-full">
           <div className="relative bg-white rounded-lg shadow-lg">
             <button

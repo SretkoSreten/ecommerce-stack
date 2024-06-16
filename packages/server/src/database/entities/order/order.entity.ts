@@ -18,7 +18,7 @@ export class ShopOrder {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.orders, { nullable: false })
+  @ManyToOne(() => User, (user) => user.orders, { nullable: false, onDelete: 'CASCADE' })
   user: User;
 
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })

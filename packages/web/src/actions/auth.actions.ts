@@ -1,4 +1,3 @@
-// src/store/authActions.ts
 
 import axios from "axios";
 import { Dispatch } from "redux";
@@ -6,9 +5,9 @@ import {
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
   LOGIN_FAILURE,
-} from "../../constants/actions.constants";
-import { FormValues, LoginResponse } from "./dto/login.dto";
-import { normalizeErrors } from "../../utils/normalizeErrors";
+} from "../constants/actions.constants";
+import { normalizeErrors } from "../utils/normalizeErrors";
+import { FormValues } from "../modules/login/dto/login.dto";
 
 export const loginRequest = () => ({
   type: LOGIN_REQUEST,
@@ -29,7 +28,7 @@ export const login = (values: FormValues) => async (dispatch: Dispatch) => {
   try {
     const {
       data: { message, isSuccess, errorCode, data },
-    }: any = await axios.post<LoginResponse>("/api/auth/login", values);
+    }: any = await axios.post("/api/auth/login", values);
 
     if (!isSuccess) {
       return dispatch(loginFailure(normalizeErrors({ message, errorCode })))

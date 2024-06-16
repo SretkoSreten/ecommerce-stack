@@ -56,7 +56,7 @@ const Pagination = () => {
           <Loading />
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10 mdl:gap-4 lg:gap-10">
+        <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10 md:gap-4 lg:gap-10">
           <Items currentItems={products.products} />
         </div>
       )}

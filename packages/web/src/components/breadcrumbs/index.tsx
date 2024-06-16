@@ -18,7 +18,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ prevLocation, title }) => {
   
 
   return (
-    <div className="w-full py-6 flex flex-col">
+    <div className="w-full flex flex-col">
       <h1 className="text-5xl text-primeColor font-titleFont font-bold">
         {title}
       </h1>

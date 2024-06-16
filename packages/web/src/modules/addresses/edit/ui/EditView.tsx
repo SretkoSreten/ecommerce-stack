@@ -4,6 +4,7 @@ import { InputField } from "../../../shared/InputField";
 import ErrorMsg from "../../../shared/ErrorMsg";
 import SuccessMsg from "../../../shared/SuccessMsg";
 import { SelectField } from "../../../shared/SelectField";
+import { PrimaryButton } from "../../../shared/PrimaryButton";
 
 export const C: React.FC<FormikProps<FormValues> & Props> = ({
   errors,
@@ -13,7 +14,7 @@ export const C: React.FC<FormikProps<FormValues> & Props> = ({
 
   return (
     <Form className="w-full">
-      <div className="px-4">
+      <div className="md:px-4">
         <h2 className="mb-4 text-xl font-bold text-gray-900">Edit Address</h2>
 
         {updated && (
@@ -23,7 +24,7 @@ export const C: React.FC<FormikProps<FormValues> & Props> = ({
         {errors && errors.message && <ErrorMsg content={errors.message} />}
 
         <div className="w-full space-y-4">
-          <div className="col-span-2 gap-4 grid grid-cols-2">
+          <div className="col-span-2 gap-4 grid md:grid-cols-2 grid-cols-1">
             <div>
               <label
                 htmlFor="address_line1"
@@ -59,7 +60,7 @@ export const C: React.FC<FormikProps<FormValues> & Props> = ({
               />
             </div>
           </div>
-          <div className="col-span-2 gap-4 grid grid-cols-3">
+          <div className="col-span-2 gap-4 grid md:grid-cols-3 grid-cols-1">
             <div>
               <label
                 htmlFor="city"
@@ -137,7 +138,7 @@ export const C: React.FC<FormikProps<FormValues> & Props> = ({
                 htmlFor="street_number"
                 className="block mb-2 text-sm font-medium text-gray-900"
               >
-                Street number
+                St.
               </label>
               <Field
                 type="text"
@@ -168,13 +169,7 @@ export const C: React.FC<FormikProps<FormValues> & Props> = ({
             </div>
           </div>
         </div>
-        <button
-          type="submit"
-          disabled={updated}
-          className="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-black rounded-lg"
-        >
-          Update Address
-        </button>
+        <PrimaryButton name="Update Address" disabled={updated} />
       </div>
     </Form>
   );

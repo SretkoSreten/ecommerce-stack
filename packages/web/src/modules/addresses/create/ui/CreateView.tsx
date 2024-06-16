@@ -3,20 +3,20 @@ import { FormValues, Props } from "../dto/address-create.dto";
 import { InputField } from "../../../shared/InputField";
 import ErrorMsg from "../../../shared/ErrorMsg";
 import { SelectField } from "../../../shared/SelectField";
+import { PrimaryButton } from "../../../shared/PrimaryButton";
 
 export const C: React.FC<FormikProps<FormValues> & Props> = ({
   errors,
-  countries
+  countries,
 }: any) => {
-
   return (
     <Form className="w-full">
-      <div className="px-4">
+      <div className="md:px-4">
         <h2 className="mb-4 text-xl font-bold text-gray-900">Create Address</h2>
         {errors && errors.message && <ErrorMsg content={errors.message} />}
 
         <div className="w-full space-y-4">
-          <div className="col-span-2 gap-4 grid grid-cols-2">
+          <div className="col-span-2 gap-4 grid md:grid-cols-2 grid-cols-1">
             <div>
               <label
                 htmlFor="address_line1"
@@ -50,7 +50,7 @@ export const C: React.FC<FormikProps<FormValues> & Props> = ({
               />
             </div>
           </div>
-          <div className="col-span-2 gap-4 grid grid-cols-3">
+          <div className="col-span-2 gap-4 grid md:grid-cols-3 grid-cols-1">
             <div>
               <label
                 htmlFor="city"
@@ -124,7 +124,7 @@ export const C: React.FC<FormikProps<FormValues> & Props> = ({
                 htmlFor="street_number"
                 className="block mb-2 text-sm font-medium text-gray-900"
               >
-                Street number
+                St.
               </label>
               <Field
                 type="text"
@@ -153,12 +153,7 @@ export const C: React.FC<FormikProps<FormValues> & Props> = ({
             </div>
           </div>
         </div>
-        <button
-          type="submit"
-          className="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-black rounded-lg"
-        >
-          Create Address
-        </button>
+        <PrimaryButton name="Create Address" />
       </div>
     </Form>
   );
@@ -175,14 +170,14 @@ export const CreateView = withFormik<Props, FormValues>({
     city: "",
     region: "",
     postal_code: "",
-    country: ""
+    country: "",
   }),
   handleSubmit: async (values, { props, setErrors }) => {
     const errors = await props.submit(values);
     if (errors) {
       setErrors(errors);
-    }else {
-      props.onFinish()
+    } else {
+      props.onFinish();
     }
   },
 })(C);

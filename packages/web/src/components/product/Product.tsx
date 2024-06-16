@@ -22,8 +22,8 @@ const Product = (props: ProductDto) => {
 
   return (
     <div className="w-full relative group">
-      <div className="max-w-80 bg-white max-h-80 relative overflow-y-hidden ">
-        <div>
+      <div className="lg:max-w-80 bg-white relative overflow-y-hidden ">
+        <div className="w-full">
           <Image className="w-full" imgSrc={props.product_image} />
         </div>
         <div className="w-full py-2 absolute bg-white -bottom-[130px] group-hover:bottom-0 duration-700">
@@ -49,7 +49,7 @@ const Product = (props: ProductDto) => {
           </ul>
         </div>
       </div>
-      <div className="max-w-80 h-28 bg-white py-2 flex flex-col gap-1 border-[1px] border-t-0 px-4">
+      <div className="lg:max-w-80 h-28 bg-white py-2 flex flex-col gap-1 border-[1px] border-t-0 px-4">
         <div className="flex items-center justify-between font-titleFont">
           <h2 className="text-lg text-primeColor font-bold">
             {props.product.name}

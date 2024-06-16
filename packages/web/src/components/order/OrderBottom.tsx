@@ -2,32 +2,37 @@ import React, { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import {
   calcDiscountAmount,
-  calcWithShippingPrice,
   subtractPrice,
 } from "../../common/helpers/cart.helper";
 import { OrderBottomProps } from "./dto/order.dto";
+import { LoadingButton } from "../../modules/shared/LoadingButton";
 
-export const OrderBottom: React.FC<OrderBottomProps> = ({ data, shippingMethods }) => {
+export const OrderBottom: React.FC<OrderBottomProps> = ({
+  data,
+  shippingMethods,
+  creating
+}) => {
   const [searchParams] = useSearchParams();
-  const [shipPrice, setShipPrice] = useState<number | null>(null);
+  const [shipPrice, setShipPrice] = useState<any>(0);
+
+  if (!data) return;
 
   useEffect(() => {
-    const shippingID = searchParams.get('shipping');
+    const shippingID = searchParams.get("shipping");
     if (shippingID && shippingMethods) {
       const shipping = shippingMethods.find((ship) => ship.id == shippingID);
       if (shipping) {
         setShipPrice(shipping.price);
-      } else {
-        setShipPrice(0); 
       }
     }
-  }, [searchParams, shippingMethods]);
-
-  if (!data) return null;
+    
+  }, [searchParams]);
 
   const total = subtractPrice(data);
   const discountAmount = calcDiscountAmount(data);
-  const finalTotal = calcWithShippingPrice(data, shipPrice ?? 0);
+  const finalTotal = total - discountAmount + parseFloat(shipPrice);
+
+  const formattedPrice = typeof shipPrice === 'number' ? shipPrice.toFixed(2) : shipPrice;
 
   return (
     <div className="w-full flex flex-col gap-4">
@@ -58,31 +63,20 @@ export const OrderBottom: React.FC<OrderBottomProps> = ({ data, shippingMethods 
                   <dt className="text-base font-normal text-gray-500">
                     Delivery
                   </dt>
-                  {shipPrice === 0 ? (
-                    <dd className="text-base font-medium text-green-600">
-                      Free
-                    </dd>
-                  ) : (
-                    <dd className="text-base font-medium text-red-600">
-                      +${shipPrice.toFixed(2)}
-                    </dd>
-                  )}
+                  <dd className="text-base font-medium text-red-600">
+                    +${formattedPrice}
+                  </dd>
                 </dl>
               )}
             </div>
             <dl className="flex items-center justify-between gap-4 border-t border-gray-200 pt-2">
               <dt className="text-base font-bold text-gray-900">Total</dt>
               <dd className="text-base font-bold text-gray-900">
-                ${finalTotal.toFixed(2)}
+                ${finalTotal}
               </dd>
             </dl>
           </div>
-          <button
-            type="submit"
-            className="flex w-full uppercase items-center justify-center rounded-lg bg-black px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800"
-          >
-            Complete order
-          </button>
+          <LoadingButton name="Complete Order" creating={creating} />
           <div className="flex items-center justify-center gap-2">
             <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
               or

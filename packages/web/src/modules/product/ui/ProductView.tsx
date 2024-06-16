@@ -30,8 +30,8 @@ const ProductDetails: React.FC = () => {
       {loading ? (
         <Loading/>
       ) : (
-        <div className="mx-auto px-10">
-          <div>
+        <div className="mx-auto p-10">
+          <div className="py-4">
             <Breadcrumbs title="Product" prevLocation={prevLocation} />
           </div>
           <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-4 h-full bg-gray-100">
