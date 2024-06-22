@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Slider from "react-slick";
 import Image from "../../layouts/layout/Image";
-import bannerImgOne from "../../assets/images/banner/bannerImgOne.webp";
-import bannerImgTwo from "../../assets/images/banner/bannerImgTwo.webp";
-import bannerImgThree from "../../assets/images/banner/bannerImgThree.webp";
+import bannerImgOne from "../../assets/images/banner/bannerImgOne.jpg";
+import bannerImgTwo from "../../assets/images/banner/bannerImgOne.jpg";
 
 const Banner: React.FC = () => {
   const [dotActive, setDotActive] = useState(0);
@@ -17,7 +16,7 @@ const Banner: React.FC = () => {
     slidesToScroll: 1,
     arrows: false,
     beforeChange: (prev: number, next: number) => {
-      console.log(prev)
+      console.log(prev);
       setDotActive(next);
     },
     appendDots: (dots: React.ReactNode) => (
@@ -42,15 +41,15 @@ const Banner: React.FC = () => {
           dots: true,
           appendDots: (dots: React.ReactNode) => (
             <div
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: "0",
-              transform: "translateY(-50%)",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
+              style={{
+                position: "absolute",
+                top: "50%",
+                left: "0",
+                transform: "translateY(-50%)",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
               <ul>{dots}</ul>
             </div>
           ),
@@ -93,11 +92,6 @@ const Banner: React.FC = () => {
         <Link to="/offer">
           <div>
             <Image imgSrc={bannerImgTwo} />
-          </div>
-        </Link>
-        <Link to="/offer">
-          <div>
-            <Image imgSrc={bannerImgThree} />
           </div>
         </Link>
       </Slider>

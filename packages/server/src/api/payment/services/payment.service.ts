@@ -33,7 +33,7 @@ export class PaymentService {
   async getUserPayments(user: User): Promise<UserPaymentMethod[]> {
     const userPaymentMethods: UserPaymentMethod[] = await this.userPaymentRepository.find(
       {
-        where: { user },
+        where: { user: {id: user.id} },
         relations: ["paymentType"],
       }
     );
@@ -136,7 +136,7 @@ export class PaymentService {
     try {
       // Find the selected payment method
       const userPaymentFound = await this.userPaymentRepository.findOne({
-        where: { id, user },
+        where: { id, user: {id: user.id} },
       });
 
       if (!userPaymentFound) {
@@ -194,8 +194,6 @@ export class PaymentService {
       throw new NotFoundException("Payment method not found");
     }
 
-    console.log(userPaymentMethod.payment_method_id)
-    // Delete the payment method from Stripe
     try {
       await this.stripe.paymentMethods.detach(
         userPaymentMethod.payment_method_id

@@ -47,7 +47,7 @@ const Cart: React.FC = () => {
           </div>
           {data.items && data.items.length > 0 ? (
             <div>
-              <div className="my-5">
+              <div className="my-5 space-y-4">
                 {data.items.map((item: any) => (
                   <ItemCard key={item.id} item={item} />
                 ))}

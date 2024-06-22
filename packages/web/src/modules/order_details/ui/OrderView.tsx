@@ -4,7 +4,7 @@ import React from "react";
 export const OrderView: React.FC<any> = (props) => {
   const {
     id,
-    payment_method: {paymentType},
+    payment_method,
     order_total,
     shippingMethod,
     orderStatus,
@@ -14,7 +14,7 @@ export const OrderView: React.FC<any> = (props) => {
     discount_amount,
     final_total
   } = props;
-
+  
   return (
     <div className="w-full max-w-container mx-auto">
       <h2 className="font-manrope font-bold text-2xl leading-10 text-black">
@@ -42,7 +42,7 @@ export const OrderView: React.FC<any> = (props) => {
             Payment Method
           </p>
           <h6 className="font-semibold font-manrope text-lg leading-9 text-black">
-            {paymentType.value}
+            {payment_method ? payment_method.paymentType.value : ""}
           </h6>
         </div>
         <div className="box group">
@@ -50,7 +50,7 @@ export const OrderView: React.FC<any> = (props) => {
             Address
           </p>
           <h6 className="font-semibold font-manrope text-lg leading-9 text-black">
-            {shipping_address.address_line1}
+            {shipping_address ? shipping_address.address_line1 : ""}
           </h6>
         </div>
       </div>

@@ -60,6 +60,21 @@ services:
     restart: unless-stopped
     ports:
       - "3000:3000"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    environment:
+      PMA_HOST: host.docker.internal
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "8080:80"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: unless-stopped
+
 networks:
   app-network:
 volumes:

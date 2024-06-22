@@ -9,11 +9,11 @@ import { Link } from "react-router-dom";
 const ItemCard = ({ item }: any) => {
   const dispatch = useDispatch();
 
-  const { productItem, qty } = item;
-  const { product, price, id } = productItem;
+  const { productItem, qty, id } = item;
+  const { product, price } = productItem;
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6">
+    <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm md:p-6">
       <div className="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
         <a href="#" className="shrink-0 md:order-1">
           <img
@@ -32,10 +32,10 @@ const ItemCard = ({ item }: any) => {
               id="decrement-button"
               onClick={() => dispatch<any>(decreaseQuantity(id))}
               data-input-counter-decrement="counter-input"
-              className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700"
+              className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100"
             >
               <svg
-                className="h-2.5 w-2.5 text-gray-900 dark:text-white"
+                className="h-2.5 w-2.5 text-gray-900"
                 aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -50,7 +50,7 @@ const ItemCard = ({ item }: any) => {
                 />
               </svg>
             </button>
-            <h2 className="w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none focus:ring-0 dark:text-white">
+            <h2 className="w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none focus:ring-0">
               {qty}
             </h2>
 
@@ -59,10 +59,10 @@ const ItemCard = ({ item }: any) => {
               id="increment-button"
               onClick={() => dispatch<any>(increaseQuantity(productItem.id))}
               data-input-counter-increment="counter-input"
-              className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700"
+              className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100"
             >
               <svg
-                className="h-2.5 w-2.5 text-gray-900 dark:text-white"
+                className="h-2.5 w-2.5 text-gray-900"
                 aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -79,7 +79,7 @@ const ItemCard = ({ item }: any) => {
             </button>
           </div>
           <div className="text-end md:order-4 md:w-32">
-            <p className="text-base font-bold text-gray-900 dark:text-white">
+            <p className="text-base font-bold text-gray-900">
               ${(qty * price).toFixed(2)}
             </p>
           </div>
@@ -87,7 +87,7 @@ const ItemCard = ({ item }: any) => {
         <div className="w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md">
           <Link
             to={`/product/${id}`}
-            className="text-base font-medium text-gray-900 hover:underline dark:text-white"
+            className="text-base font-medium text-gray-900 hover:underline"
           >
             {product.description}
           </Link>
@@ -95,7 +95,7 @@ const ItemCard = ({ item }: any) => {
             <button
               type="button"
               onClick={() => dispatch<any>(removeItemFromCart(id))}
-              className="inline-flex items-center text-sm font-medium text-red-600 hover:underline dark:text-red-500"
+              className="inline-flex items-center text-sm font-medium text-red-600 hover:underline"
             >
               <svg
                 className="me-1.5 h-5 w-5"

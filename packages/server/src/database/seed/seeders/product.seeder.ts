@@ -1,11 +1,11 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, EntityManager } from "typeorm";
-import { faker } from "@faker-js/faker";
-import { Product } from "../../entities/product/product.entity";
-import { ProductItem } from "../../entities/product/product_item.entity";
-import { Category } from "../../entities/category/category.entity";
-import { VariationOption } from "../../entities/variation/variation_option.entity";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, EntityManager } from 'typeorm';
+import { faker } from '@faker-js/faker';
+import { Product } from '../../entities/product/product.entity';
+import { ProductItem } from '../../entities/product/product_item.entity';
+import { Category } from '../../entities/category/category.entity';
+import { VariationOption } from '../../entities/variation/variation_option.entity';
 
 @Injectable()
 export class ProductSeeder {
@@ -18,7 +18,7 @@ export class ProductSeeder {
     private readonly categoryRepository: Repository<Category>,
     @InjectRepository(VariationOption)
     private readonly variationRepository: Repository<VariationOption>,
-    private readonly entityManager: EntityManager
+    private readonly entityManager: EntityManager,
   ) {}
 
   async seed() {
@@ -26,7 +26,7 @@ export class ProductSeeder {
   }
 
   private async generateProductData(
-    categories: Category[]
+    categories: Category[],
   ): Promise<Partial<Product>> {
     const category: Category =
       categories[Math.floor(Math.random() * categories.length)];
@@ -39,20 +39,33 @@ export class ProductSeeder {
 
   private async generateProductItemData(
     product: Product,
-    variations: VariationOption[]
+    variations: VariationOption[],
   ): Promise<Partial<ProductItem>> {
+    const images = [
+      'https://res.cloudinary.com/publicproject/image/upload/v1719096450/ecommerce/spfThree_mqdjx4.webp',
+      'https://res.cloudinary.com/publicproject/image/upload/v1719096450/ecommerce/bestSellerFour_kyr1ys.webp',
+      'https://res.cloudinary.com/publicproject/image/upload/v1719096450/ecommerce/newArrOne_w1vn8b.webp',
+      'https://res.cloudinary.com/publicproject/image/upload/v1719096450/ecommerce/spfTwo_e58buh.webp',
+      'https://res.cloudinary.com/publicproject/image/upload/v1719096450/ecommerce/newArrTwo_dkhoad.webp',
+      'https://res.cloudinary.com/publicproject/image/upload/v1719096450/ecommerce/bestSellerOne_ejzm6n.webp',
+      'https://res.cloudinary.com/publicproject/image/upload/v1719096450/ecommerce/bestSellerTwo_oh7gk3.webp',
+      'https://res.cloudinary.com/publicproject/image/upload/v1719096450/ecommerce/spfFour_ax2gos.webp'
+    ];
+
+    const image = images[Math.floor(Math.random() * images.length)];
+
     const data: any = {
       SKU: faker.random.alphaNumeric(10),
       qty_in_stock: faker.datatype.number(100),
-      product_image: faker.image.imageUrl(),
+      product_image: image,
       price: faker.datatype.number({ min: 10, max: 1000, precision: 0.01 }),
       product: product,
       variations: [],
     };
 
-    for (let i = 0; i < 10; i++) { 
+    for (let i = 0; i < 10; i++) {
       const randomVariation: VariationOption = variations[i];
-      data.variations.push(randomVariation); 
+      data.variations.push(randomVariation);
     }
 
     return data;
@@ -74,9 +87,9 @@ export class ProductSeeder {
       await this.entityManager.transaction(
         async (transactionalEntityManager) => {
           await transactionalEntityManager.upsert(Product, productData, {
-            conflictPaths: ["name"],
+            conflictPaths: ['name'],
           });
-        }
+        },
       );
     }
 
@@ -87,15 +100,12 @@ export class ProductSeeder {
         products[Math.floor(Math.random() * products.length)];
       const productItemData = await this.generateProductItemData(
         randomProduct,
-        variations
+        variations,
       );
       await this.entityManager.transaction(
         async (transactionalEntityManager) => {
-          await transactionalEntityManager.save(
-            ProductItem,
-            productItemData
-          );
-        }
+          await transactionalEntityManager.save(ProductItem, productItemData);
+        },
       );
     }
   }

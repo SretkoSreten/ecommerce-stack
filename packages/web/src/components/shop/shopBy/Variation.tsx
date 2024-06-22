@@ -12,7 +12,7 @@ interface VariationProps {
 
 const Variation: React.FC<VariationProps> = ({ options, name }) => {
   const dispatch = useDispatch();
-  const [showOptions, setShowOptions] = useState(true);
+  const [showOptions, setShowOptions] = useState(false);
   const [variations, setVariations] = useState<string[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
 

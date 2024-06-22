@@ -24,7 +24,7 @@ export class VariationOptionSeeder {
     const variation = this.generateRandomElement(variations);
 
     return {
-      value: faker.color.rgb(), // or any appropriate value generator
+      value: faker.commerce.productAdjective(),
       variation: variation,
     };
   }

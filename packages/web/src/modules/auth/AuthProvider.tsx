@@ -13,6 +13,8 @@ interface AuthContextType {
   loading: boolean;
 }
 
+const API_URL = import.meta.env.VITE_BACKEND_URL;
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
@@ -26,7 +28,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     const verifyToken = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.post("http://localhost:4000/api/auth/verify-token", {token});
+        const response = await axios.post(`${API_URL}/api/auth/verify-token`, {token});
         if (!response.data.isSuccess){
             setIsAuthenticated(false);
             setLoading(false);

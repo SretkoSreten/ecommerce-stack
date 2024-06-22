@@ -60,9 +60,8 @@ export class AddressService {
   }
 
   async getUserAddresses(user: User) {
-    console.log(user);
     const addresses = await this.userAddressRepository.find({
-      where: { user },
+      where: { user: {id: user.id} },
       relations: ["address"],
     });
     return addresses;
@@ -72,7 +71,7 @@ export class AddressService {
     try {
       // Find the selected address
       const userAddressFound = await this.userAddressRepository.findOne({
-        where: { id, user },
+        where: { id, user: {id: user.id} },
       });
 
       if (!userAddressFound) {
@@ -90,7 +89,7 @@ export class AddressService {
           // Update all other addresses of the user to not be the default
           await transactionalEntityManager.update(
             UserAddress,
-            { user, id: Not(id) },
+            { user: {id: user.id}, id: Not(id) },
             { is_default: false }
           );
 

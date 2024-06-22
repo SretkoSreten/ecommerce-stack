@@ -47,8 +47,6 @@ const Pagination = () => {
     return existingParams["page"] ? parseInt(existingParams["page"]) : 0;
   };
 
-  if (!products) return;
-
   return (
     <div>
       {loading ? (
@@ -56,9 +54,15 @@ const Pagination = () => {
           <Loading />
         </div>
       ) : (
-        <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10 md:gap-4 lg:gap-10">
-          <Items currentItems={products.products} />
-        </div>
+        <>
+          {products && products.products && products.products.length > 0 ? (
+            <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10 md:gap-4 lg:gap-10">
+              <Items currentItems={products.products} />
+            </div>
+          ) : (
+            <div className="text-lg">No items</div>
+          )}
+        </>
       )}
 
       {!loading && (
@@ -68,7 +72,9 @@ const Pagination = () => {
             onPageChange={(e) => handlePageClick(e)}
             pageRangeDisplayed={3}
             marginPagesDisplayed={2}
-            pageCount={products.pagination && products.pagination.pageCount}
+            pageCount={
+              products && products.pagination && products.pagination.pageCount
+            }
             previousLabel=""
             initialPage={getCurrentPage()}
             pageLinkClassName="w-9 h-9 border-[1px] border-lightColor hover:border-gray-500 duration-300 flex justify-center items-center"
@@ -77,9 +83,11 @@ const Pagination = () => {
             activeClassName="bg-black text-white"
           />
 
-          <p className="text-base font-normal text-lightText">
-            Products found: {products.pagination && products.pagination.count}
-          </p>
+          {products && (
+            <p className="text-base font-normal text-lightText">
+              Products found: {products.pagination && products.pagination.count}
+            </p>
+          )}
         </div>
       )}
     </div>

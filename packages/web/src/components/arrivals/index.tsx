@@ -42,7 +42,7 @@ const NewArrivals: React.FC<NewArrivalsProps> = ({ products }) => {
 
   return (
     <div className="w-full py-16">
-      <Heading heading="New Arrivals" />
+      <Heading heading="Products" />
       <Slider {...settings}>
         {products.map(product => (
           <div className="px-2" key={product.id}>

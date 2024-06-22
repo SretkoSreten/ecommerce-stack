@@ -15,9 +15,7 @@ const HeaderBottom: React.FC = () => {
   const [, setSearchParams] = useSearchParams();
 
   const dispatch = useDispatch();
-  const { data, searchItems } = useSelector(
-    (state: any) => state.layout
-  );
+  const { data, searchItems } = useSelector((state: any) => state.layout);
 
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
@@ -62,11 +60,10 @@ const HeaderBottom: React.FC = () => {
         updatedCategories.subcategories[parentName] = [];
       }
       if (updatedCategories.subcategories[parentName].includes(name)) {
-        updatedCategories.subcategories[
-          parentName
-        ] = updatedCategories.subcategories[parentName].filter(
-          (subcategory: any) => subcategory !== name
-        );
+        updatedCategories.subcategories[parentName] =
+          updatedCategories.subcategories[parentName].filter(
+            (subcategory: any) => subcategory !== name
+          );
       } else {
         updatedCategories.subcategories[parentName].push(name);
       }
@@ -95,8 +92,8 @@ const HeaderBottom: React.FC = () => {
       categories: JSON.stringify(updatedCategories),
     };
     setSearchParams(newParams);
-
-    return navigate(`/shop/${window.location.search}`);
+    navigate(`/shop/${window.location.search}`);
+    window.location.reload();
   };
 
   return (
@@ -116,7 +113,7 @@ const HeaderBottom: React.FC = () => {
                 initial={{ y: 30, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.5 }}
-                className="absolute top-20 w-40 z-50 bg-white w-auto border text-black h-auto"
+                className="absolute top-20 w-40 z-50 bg-white rounded-lg shadow-lg border text-black h-auto"
               >
                 {data &&
                   data.categories &&
@@ -142,35 +139,26 @@ const HeaderBottom: React.FC = () => {
               placeholder="Search your products here"
             />
             <FaSearch className="w-5 h-5" />
+
             {searchItems.length > 0 && (
-              <div
-                className={`w-full mx-auto bg-white top-16 absolute left-0 z-50 md:shadow-2xl cursor-pointer`}
+              <ul
+                className={`w-full mx-auto rounded-lg space-y-2 bg-primaryBg top-16 absolute left-0 z-10 md:shadow-2xl cursor-pointer`}
               >
                 {searchItems.map((item: any) => (
-                  <div
+                  <li
                     onClick={() => navigateToProduct(item.id)}
                     key={item.id}
-                    className="h-28 bg-white flex items-center gap-3"
+                    className="flex p-4 items-center gap-3 cursor-pointer hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:text-blue-700 "
                   >
-                    <img
-                      className="w-24"
-                      src={item.product_image}
-                      alt="productImg"
-                    />
-                    <div className="flex flex-col gap-1">
-                      <p className="font-semibold text-lg">
+                    <div className="flex items-center gap-3">
+                      <FaSearch className="w-4 h-4" />
+                      <p className="font-semibold text-base">
                         {item.product.name}
                       </p>
-                      <p className="text-sm">
-                        Price:{" "}
-                        <span className="text-primeColor font-semibold">
-                          ${item.price}
-                        </span>
-                      </p>
                     </div>
-                  </div>
+                  </li>
                 ))}
-              </div>
+              </ul>
             )}
           </div>
           <div className="md:flex hidden gap-4 mt-2 md:w-[100px] justify-end items-center pr-6 cursor-pointer relative">
@@ -189,13 +177,13 @@ const HeaderBottom: React.FC = () => {
               <div
                 className={`z-10 ${
                   showUser ? "absolute" : "hidden"
-                } top-5 right-0 my-4 text-base list-none bg-white divide-y divide-gray-100 shadow`}
+                } top-5 right-0 my-4 text-base list-none bg-white divide-y divide-gray-100 shadow-lg`}
                 id="user-dropdown"
               >
                 {data.auth && data.auth.data ? (
-                  <div className="w-40">
+                  <div className="w-40 rounded-lg">
                     <div className="px-4 py-3">
-                      <span className="block text-sm  text-gray-500 truncate dark:text-gray-400">
+                      <span className="block text-sm  text-gray-500 truncate">
                         {data.auth.data.email}
                       </span>
                     </div>
@@ -204,7 +192,7 @@ const HeaderBottom: React.FC = () => {
                         <Link
                           to="/account/edit"
                           onClick={() => setShowUser(!showUser)}
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         >
                           Account
                         </Link>
@@ -213,7 +201,7 @@ const HeaderBottom: React.FC = () => {
                         <Link
                           to="/logout"
                           onClick={() => setShowUser(!showUser)}
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         >
                           Sign out
                         </Link>

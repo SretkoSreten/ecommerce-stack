@@ -61,7 +61,9 @@ const Footer = () => {
     };
     setSearchParams(newParams);
 
-    return navigate(`/shop/${window.location.search}`);
+    navigate(`/shop/${window.location.search}`);
+
+    window.location.reload();
   };
 
   return (

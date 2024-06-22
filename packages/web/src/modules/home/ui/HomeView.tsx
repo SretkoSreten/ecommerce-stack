@@ -13,11 +13,11 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="mx-auto">
-      <div className="md:block hidden">
+    <div className="max-w-container mx-auto">
+      <div className="lg:px-10">
         <Banner />
       </div>
-      <div className="max-w-container mx-auto px-10">
+      <div className="max-w-container px-10 mx-auto">
         {!loading && products.data && <NewArrivals products={products.data} />}
       </div>
     </div>

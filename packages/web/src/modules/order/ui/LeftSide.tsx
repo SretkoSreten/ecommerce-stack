@@ -2,7 +2,8 @@ import React from "react";
 import { PaymentMethod } from "../../../components/order/PaymentMethod";
 import { ShippingMethod } from "../../../components/order/ShippingMethod";
 import { AddressBook } from "../../../components/order/AddressBook";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { PrimaryButton } from "../../shared/PrimaryButton";
 
 export const LeftSide: React.FC<any> = ({
   payments,
@@ -10,6 +11,8 @@ export const LeftSide: React.FC<any> = ({
   shippingMethods,
   errors,
 }) => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-w-0 flex-1 space-y-8">
       <div className="space-y-4">
@@ -59,11 +62,30 @@ export const LeftSide: React.FC<any> = ({
             <span className="font-medium">{errors.paymentMethodId}</span>
           </div>
         )}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          {payments &&
-            payments.map((payment: any) => {
-              return <PaymentMethod key={payment.id} {...payment} />;
-            })}
+        <div>
+          {payments.length > 0 ? (
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+              {payments.map((payment: any) => {
+                return <PaymentMethod key={payment.id} {...payment} />;
+              })}
+            </div>
+          ) : (
+            <div className="py-4">
+              <div className="max-w-[500px] space-y-2 rounded-md">
+                <h1 className="font-titleFont text-xl font-bold">
+                  You don't have any payment method
+                </h1>
+                <p className="text-base pb-2">
+                  Let's give your "lives" plenty of purpose and joy by filling
+                  it with a diverse and enriching collection of payment methods.
+                </p>
+                <PrimaryButton
+                  name="Go to account"
+                  onClick={() => navigate("/account/payments")}
+                />
+              </div>
+            </div>
+          )}
         </div>
       </div>
       <div className="space-y-4">

@@ -47,11 +47,10 @@ const Header = () => {
         updatedCategories.subcategories[parentName] = [];
       }
       if (updatedCategories.subcategories[parentName].includes(name)) {
-        updatedCategories.subcategories[
-          parentName
-        ] = updatedCategories.subcategories[parentName].filter(
-          (subcategory: any) => subcategory !== name
-        );
+        updatedCategories.subcategories[parentName] =
+          updatedCategories.subcategories[parentName].filter(
+            (subcategory: any) => subcategory !== name
+          );
       } else {
         updatedCategories.subcategories[parentName].push(name);
       }
@@ -82,14 +81,22 @@ const Header = () => {
     setSearchParams(newParams);
     setSidenav(false);
 
-    return navigate(`/shop/${window.location.search}`);
+    navigate(`/shop/${window.location.search}`);
   };
+
+  function subtractQuantities(cart: any) {
+    let totalSum = 0;
+    cart.data.forEach((item: any) => {
+      totalSum += item.qty;
+    });
+    return totalSum;
+  }
 
   return (
     <div className="w-full h-20 bg-white relative sticky top-0 z-50 border-b-[1px] border-b-gray-200">
       <nav className="h-full max-w-container px-10 mx-auto relative">
         <Flex className="flex items-center justify-between h-full">
-          <Link to="/" className="text-xl">
+          <Link to="/home" className="text-xl">
             ECOMMERCE
           </Link>
           <div>
@@ -174,7 +181,7 @@ const Header = () => {
                         </motion.ul>
                       )}
                       <div className="pt-4">
-                        {data.auth && data.auth.isSuccess ? (
+                        {!data.auth ? (
                           <ul className="text-gray-200 flex flex-col gap-2">
                             <li className="font-normal hover:font-bold items-center text-lg text-gray-200 hover:underline underline-offset-[4px] decoration-[1px] hover:text-white md:border-r-[2px] border-r-gray-300 hoverEffect last:border-r-0">
                               <NavLink
@@ -222,6 +229,17 @@ const Header = () => {
                               >
                                 Logout
                               </NavLink>
+                            </li>
+                            <li className="font-normal items-center text-lg text-gray-200 hover:text-white md:border-r-[2px] border-r-gray-300 hoverEffect last:border-r-0">
+                              {data.auth && data.auth.data && (
+                                <NavLink to="/cart" className="flex">
+                                  Cart (
+                                  {data.cart.data
+                                    ? subtractQuantities(data.cart)
+                                    : 0}
+                                  )
+                                </NavLink>
+                              )}
                             </li>
                           </ul>
                         )}

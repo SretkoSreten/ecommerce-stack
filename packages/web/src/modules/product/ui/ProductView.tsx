@@ -28,22 +28,23 @@ const ProductDetails: React.FC = () => {
   return (
     <div className="max-w-container w-full mx-auto border-b-[1px] border-b-gray-300">
       {loading ? (
-        <Loading/>
+        <Loading />
       ) : (
         <div className="mx-auto p-10">
           <div className="py-4">
             <Breadcrumbs title="Product" prevLocation={prevLocation} />
           </div>
-          <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-4 h-full bg-gray-100">
-
-            <div className="h-full xl:col-span-2">
-              <img
-                className="h-full object-cover"
-                src={product.product_image}
-              />
-            </div>
-            <div className="h-full w-full md:col-span-2 xl:col-span-3 xl:p-14 flex flex-col gap-6 justify-center">
-              <ProductInfo {...product} />
+          <div className="mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
+              <div className="lg:col-span-2">
+                <img
+                  className="h-full object-cover"
+                  src={product.product_image}
+                />
+              </div>
+              <div className="md:col-span-2 lg:col-span-3 flex flex-col gap-6 justify-center">
+                <ProductInfo {...product} />
+              </div>
             </div>
           </div>
           {product.variations.length && (

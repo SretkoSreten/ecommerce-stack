@@ -133,7 +133,7 @@ export class OrderService {
 
       if (orderStatus) {
         orders = await this.orderRepository.find({
-          where: { user, orderStatus },
+          where: { user: {id: user.id}, orderStatus },
           relations: ["coupon", "orderLines", "orderStatus"],
           order: {
             order_date: "DESC", // Sort by createdAt field in descending order
@@ -141,7 +141,7 @@ export class OrderService {
         });
       } else {
         orders = await this.orderRepository.find({
-          where: { user },
+          where: { user: {id: user.id} },
           relations: ["coupon", "orderLines", "orderStatus"],
           order: {
             order_date: "DESC", // Sort by createdAt field in descending order
@@ -150,7 +150,7 @@ export class OrderService {
       }
     } else {
       orders = await this.orderRepository.find({
-        where: { user },
+        where: { user: {id: user.id} },
         relations: ["coupon", "orderLines", "orderStatus"],
         order: {
           order_date: "DESC", // Sort by createdAt field in descending order
@@ -165,7 +165,7 @@ export class OrderService {
     const orderStatus = await this.statusRepository.findOne({
       where: { status: StatusType.CANCELLED },
     });
-    await this.orderRepository.update({ id: orderId, user }, { orderStatus });
+    await this.orderRepository.update({ id: orderId, user: {id: user.id} }, { orderStatus });
     return successObject;
   }
 
@@ -185,7 +185,7 @@ export class OrderService {
       const shippingAddress = await this.createAddress(transactionalEntityManager, data.addressId);
   
       const cart = await transactionalEntityManager.findOneOrFail(ShoppingCart, {
-        where: { user },
+        where: { user: {id: user.id} },
         relations: ["items", "coupon", "items.productItem"],
       });
   

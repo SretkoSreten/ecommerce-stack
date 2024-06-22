@@ -110,7 +110,7 @@ export class CartService {
 
     // Fetch the user's shopping cart
     const userCart: ShoppingCart = await this.cartRepository.findOne({
-      where: { user },
+      where: { user: {id: user.id} },
       relations: ["coupon"],
     });
 
@@ -144,7 +144,7 @@ export class CartService {
   }
 
   public async removeCoupon(user: User){
-    const cart = await this.cartRepository.findOne({ where: { user } });
+    const cart = await this.cartRepository.findOne({ where: { user: {id: user.id} } });
     if (!cart) {
       throw new NotFoundException(
         `Shopping cart not found for user with ID ${user.id}`
@@ -156,7 +156,7 @@ export class CartService {
   }
 
   public async clearCart(user: User) {
-    const cart = await this.cartRepository.findOne({ where: { user } });
+    const cart = await this.cartRepository.findOne({ where: { user: {id: user.id} } });
     if (!cart) {
       throw new NotFoundException(
         `Shopping cart not found for user with ID ${user.id}`
@@ -222,8 +222,12 @@ export class CartService {
     productId: number,
     qty: number = 1
   ): Promise<ShoppingCartItem> {
-    // Find the shopping cart by user
-    const cart = await this.cartRepository.findOne({ where: { user } });
+
+    if (!user || !user.id) {
+      throw new NotFoundException('Invalid user object. User must have a valid ID.');
+    }
+    const cart = await this.cartRepository.findOne({ where: { user: {id: user.id} } });
+
     if (!cart) {
       throw new NotFoundException(
         `Shopping cart not found for user with ID ${user.id}`
