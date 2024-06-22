@@ -7,6 +7,8 @@ import {
 } from "../constants/actions.constants";
 import axios from "axios";
 
+const API_URL = import.meta.env.VITE_BACKEND_URL;
+
 export const getShopRequest = () => ({
   type: GET_SHOP_REQUEST,
 });
@@ -30,15 +32,13 @@ export const fetchProducts = () => {
   return async (dispatch: Dispatch) => {
     try {
       const [productResponse] = await Promise.all([
-        axios.get(`/api/products/${window.location.search}`),
+        axios.get(`${API_URL}/api/products/${window.location.search}`),
       ]);
       const { data } = productResponse.data;
       dispatch(getShopProductsSuccess(data));
     } catch (error) {}
   };
 };
-
-const API_URL = import.meta.env.VITE_BACKEND_URL;
 
 
 export const fetchSideNav = () => {

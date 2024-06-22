@@ -7,6 +7,11 @@ services:
       dockerfile: Dockerfile
     ports:
       - "4000:4000"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:4000"]  # Adjust health check URL and command
+      interval: 30s   # Check health every 30 seconds
+      timeout: 5s    # Timeout for each health check attempt
+      retries: 3      # Number of retries before considering the container unhealthy
     environment:
       - JWT_SECRET=qwdwqwqdwqdqwd
       - STRIPE_SECRET_KEY=sk_test_51PRDWY1C56reqfLSPoLDuTI8T7npwnnqmFqU3M1Iqqq89UqcKA4mHxAH0L5010rZbXzYf6SEf2xhBjnwHhxaJqft00Gu4plg5y
@@ -48,7 +53,8 @@ services:
       - VITE_BACKEND_URL=http://localhost:4000
       - VITE_API_BASE_URL=http://server:4000
     depends_on:
-      - server
+      server:
+        condition: service_healthy
     networks:
       - app-network
     restart: unless-stopped

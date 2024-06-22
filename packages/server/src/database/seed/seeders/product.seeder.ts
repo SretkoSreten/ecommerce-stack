@@ -61,7 +61,7 @@ export class ProductSeeder {
   async seedProductsAndItems() {
     const countProducts: number = await this.productRepository.count();
     const countProductItems: number = await this.productItemRepository.count();
-    const PRODUCT_COUNT: number = 50;
+    const PRODUCT_COUNT: number = 200;
     const GENERATE_PRODUCT_COUNT = PRODUCT_COUNT - countProducts;
     const GENERATE_PRODUCT_ITEM_COUNT = PRODUCT_COUNT - countProductItems;
 
