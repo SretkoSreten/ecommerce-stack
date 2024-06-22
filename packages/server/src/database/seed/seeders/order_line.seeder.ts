@@ -1,8 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { ShopOrder } from 'src/database/entities/order/order.entity';
-import { OrderLine } from 'src/database/entities/order/order_line.entity';
-import { Product } from 'src/database/entities/product/product.entity';
-import { ProductItem } from 'src/database/entities/product/product_item.entity';
+import { ShopOrder } from '../../entities/order/order.entity';
+import { OrderLine } from '../../entities/order/order_line.entity';
+import { ProductItem } from '../../entities/product/product_item.entity';
 import { Repository } from 'typeorm';;
 
 export class OrderLineSeeder {

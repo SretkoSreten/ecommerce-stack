@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, EntityManager } from 'typeorm';
-import { faker } from '@faker-js/faker';
-import { ShippingMethod } from 'src/database/entities/ship_method/ship_method.entity';
+import { ShippingMethod } from '../../entities/ship_method/ship_method.entity';
 
 @Injectable()
 export class ShippingMethodSeeder {

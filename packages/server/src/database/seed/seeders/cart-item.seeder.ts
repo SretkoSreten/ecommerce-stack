@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ShoppingCart } from 'src/database/entities/cart/cart.entity';
-import { ShoppingCartItem } from 'src/database/entities/cart/cart_item.entity';
-import { ProductItem } from 'src/database/entities/product/product_item.entity';
+import { ShoppingCart } from '../../entities/cart/cart.entity';
+import { ShoppingCartItem } from '../../entities/cart/cart_item.entity';
+import { ProductItem } from '../../entities/product/product_item.entity';
 import { Repository, EntityManager } from 'typeorm';
 
 @Injectable()

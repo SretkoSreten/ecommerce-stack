@@ -14,7 +14,7 @@ import Flex from "../layout/Flex";
 import { useSelector } from "react-redux";
 
 const Header = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const { data } = useSelector((state: any) => state.layout);

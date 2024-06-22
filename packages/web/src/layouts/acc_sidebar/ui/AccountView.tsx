@@ -4,7 +4,7 @@ import { LeftSide } from "./LeftSide";
 import { RightSide } from "./RightSide";
 
 export const AccountView = () => {
-  const [prevLocation, setPrevLocation] = useState<string>("");
+  const [prevLocation,] = useState<string>("");
 
   return (
     <div className="max-w-container p-10 mx-auto">

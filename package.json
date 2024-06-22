@@ -5,16 +5,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "lerna run build",
-    "start:server": "lerna run start:server:dev",
-    "start:web": "lerna run start:web",
+    "build": "lerna run build --scope={@ecommerce/server}",
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "workspaces": {
-    "packages": [
-      "packages/*"
-    ],
-    "version": "independent"
   },
   "devDependencies": {
     "lerna": "^8.1.3"

@@ -21,6 +21,8 @@ export const getItemsFailure = (error: string) => ({
   payload: error,
 });
 
+const API_URL = import.meta.env.VITE_BACKEND_URL;
+
 export const clearCart = () => {
   return async (dispatch: Dispatch) => {
     dispatch(getItemsRequest());
@@ -28,7 +30,7 @@ export const clearCart = () => {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.delete(`/api/carts/clear`, {
+      await axios.delete(`${API_URL}/api/carts/clear`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -50,7 +52,7 @@ export const removeItemFromCart = (id: number) => {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.delete(`/api/carts/item/${id}`, {
+      await axios.delete(`${API_URL}/api/carts/item/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -80,7 +82,7 @@ export const increaseQuantity = (id: number) => {
         }
       );
 
-      const { data: {data} } = await axios.get("/api/carts/user", {
+      const { data: {data} } = await axios.get(`${API_URL}/api/carts/user`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -102,7 +104,7 @@ export const decreaseQuantity = (id: number) => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      const response = await axios.get("/api/carts/user", {
+      const response = await axios.get(`${API_URL}/api/carts/user`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -122,7 +124,7 @@ export const fetchCart = () => {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await axios.get("/api/carts/user", {
+      const response = await axios.get(`${API_URL}/api/carts/user`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

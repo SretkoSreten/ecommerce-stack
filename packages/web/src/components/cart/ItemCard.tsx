@@ -1,4 +1,3 @@
-import { ImCross } from "react-icons/im";
 import { useDispatch } from "react-redux";
 import {
   decreaseQuantity,

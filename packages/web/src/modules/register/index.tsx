@@ -5,12 +5,14 @@ import { useNavigate } from "react-router-dom";
 import { normalizeErrors } from "../../utils/normalizeErrors";
 import { Credentials, LoginResponse } from "./dto/register.dto";
 
+const API_URL = import.meta.env.VITE_BACKEND_URL;
+
 const RegisterConnector: React.FC = () => {
   const navigate = useNavigate();
   // Define the submit handler function
   const handleSubmit = async (values: Credentials): Promise<any> => {
     const { data: dataResponse }: any = await axios.post<LoginResponse>(
-      "/api/auth/register",
+      `${API_URL}/api/auth/register`,
       values
     );
 

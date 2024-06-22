@@ -11,7 +11,7 @@ import { accSidebarList } from "../../constants";
 const Footer = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [, setSearchParams] = useSearchParams();
   const { loading, data } = useSelector((state: any) => state.layout);
 
   useEffect(() => {

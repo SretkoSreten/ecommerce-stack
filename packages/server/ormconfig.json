@@ -1,0 +1,19 @@
+{
+    "type": "mysql",
+    "host": "host.docker.internal",
+    "port": 3306,
+    "database": "ecommerce",
+    "username": "root",
+    "password": "",
+    "synchronize": false,
+    "entities": [
+       "src/database/entities/**/*.ts"
+    ],
+    "migrations": [
+       "src/database/migration/history/*.ts"
+    ],
+    "cli": {
+       "entitiesDir": "src/database/entities",
+       "migrationsDir": "database/migration"
+    }
+ }

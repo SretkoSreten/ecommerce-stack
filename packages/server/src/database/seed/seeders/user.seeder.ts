@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { InjectEntityManager, InjectRepository } from "@nestjs/typeorm";
-import { User } from "src/database/entities/user/user.entity";
+import { User } from "../../entities/user/user.entity";
 import { EntityManager, Repository } from "typeorm";
 import { faker } from "@faker-js/faker";
-import { Role } from "src/database/entities/role/role.entity";
+import { Role } from "../../entities/role/role.entity";
 import { SeederInterface } from "../seed.interference";
 import * as bcrypt from "bcrypt";
-import { ShoppingCart } from "src/database/entities/cart/cart.entity";
+import { ShoppingCart } from "../../entities/cart/cart.entity";
 import Stripe from "stripe";
 import { ConfigService } from "@nestjs/config";
 

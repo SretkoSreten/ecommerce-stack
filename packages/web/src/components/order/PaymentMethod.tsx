@@ -7,7 +7,7 @@ import { CheckField } from "../../modules/shared/CheckField";
 
 export const PaymentMethod: React.FC<any> = (props) => {
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [, setSearchParams] = useSearchParams();
 
   const dispatch = useDispatch();
 

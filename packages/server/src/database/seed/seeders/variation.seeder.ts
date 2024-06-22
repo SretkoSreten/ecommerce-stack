@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, EntityManager } from 'typeorm';
 import { faker } from '@faker-js/faker';
-import { Variation } from 'src/database/entities/variation/variation.entity';
-import { Category } from 'src/database/entities/category/category.entity';
+import { Variation } from '../../entities/variation/variation.entity';
+import { Category } from '../../entities/category/category.entity';
 
 @Injectable()
 export class VariationSeeder {

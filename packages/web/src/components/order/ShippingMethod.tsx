@@ -4,7 +4,7 @@ import { useSearchParams } from "react-router-dom"; // Assuming you are using re
 import { CheckField } from "../../modules/shared/CheckField";
 
 export const ShippingMethod: React.FC<any> = (props) => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [, setSearchParams] = useSearchParams();
   const { id, name, price } = props;
 
   const handleSelection = (event: React.ChangeEvent<HTMLInputElement>) => {

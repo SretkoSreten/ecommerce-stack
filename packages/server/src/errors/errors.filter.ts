@@ -8,7 +8,7 @@ import {
 } from "@nestjs/common";
 import { HttpAdapterHost } from "@nestjs/core";
 import { ErrorBody, errorMessages } from "./custom";
-
+ 
 @Catch()
 export class ErrorsFilter implements ExceptionFilter {
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}

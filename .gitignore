@@ -1,1 +1,55 @@
+# Ignore node_modules folder
+
+node_modules
+
 node_modules/
+
+node_modules/*
+
+# Ignore npm's cache
+.npm
+
+# Ignore development files and folders
+*.log
+*.txt
+*.md
+*.pdf
+.DS_Store
+
+# Ignore user-specific files
+*.pem
+*.key
+*.cert
+
+# Ignore dotenv files (if used for environment variables)
+.env
+.env.*
+
+# Ignore test files and folders (if not needed in production)
+tests/
+__tests__/
+
+# Ignore editor-specific files and folders
+.vscode/
+.idea/
+
+# Ignore git-related files
+.git
+.gitignore
+
+# Ignore Docker-specific files
+.dockerignore
+Dockerfile
+
+# Ignore package-lock.json (if using npm)
+package-lock.json
+
+# Ignore yarn.lock (if using yarn)
+yarn.lock
+
+# Ignore any temporary or build files
+/build
+/dist
+/out
+/tmp
+*.tmp

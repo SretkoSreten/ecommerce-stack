@@ -38,6 +38,9 @@ export const fetchProducts = () => {
   };
 };
 
+const API_URL = import.meta.env.VITE_BACKEND_URL;
+
+
 export const fetchSideNav = () => {
   return async (dispatch: Dispatch) => {
     try {
@@ -47,10 +50,10 @@ export const fetchSideNav = () => {
         variationResponse,
         authResponse,
       ] = await Promise.all([
-        axios.get("/api/categories/shop"),
-        axios.get(`/api/variations/shop/${window.location.search}`),
+        axios.get(`${API_URL}/api/categories/shop`),
+        axios.get(`${API_URL}/api/variations/shop/${window.location.search}`),
         token
-          ? axios.post("/api/auth/verify-token", { token })
+          ? axios.post(`${API_URL}/api/auth/verify-token`, { token })
           : Promise.resolve({ data: null }),
       ]);
 

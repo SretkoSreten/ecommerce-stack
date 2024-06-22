@@ -12,10 +12,10 @@ import { motion } from "framer-motion";
 import Flex from "../layout/Flex";
 
 const HeaderBottom: React.FC = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [, setSearchParams] = useSearchParams();
 
   const dispatch = useDispatch();
-  const { loading, data, searchItems } = useSelector(
+  const { data, searchItems } = useSelector(
     (state: any) => state.layout
   );
 

@@ -2,10 +2,10 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, EntityManager } from "typeorm";
 import { faker } from "@faker-js/faker";
-import { Product } from "src/database/entities/product/product.entity";
-import { ProductItem } from "src/database/entities/product/product_item.entity";
-import { Category } from "src/database/entities/category/category.entity";
-import { VariationOption } from "src/database/entities/variation/variation_option.entity";
+import { Product } from "../../entities/product/product.entity";
+import { ProductItem } from "../../entities/product/product_item.entity";
+import { Category } from "../../entities/category/category.entity";
+import { VariationOption } from "../../entities/variation/variation_option.entity";
 
 @Injectable()
 export class ProductSeeder {

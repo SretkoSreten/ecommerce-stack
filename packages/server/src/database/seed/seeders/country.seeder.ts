@@ -3,7 +3,7 @@
 
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Country } from 'src/database/entities/country/country.entity';
+import { Country } from '../../entities/country/country.entity';
 import { Repository, EntityManager } from 'typeorm';
 
 @Injectable()

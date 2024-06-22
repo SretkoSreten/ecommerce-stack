@@ -26,7 +26,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     const verifyToken = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.post("/api/auth/verify-token", {token});
+        const response = await axios.post("http://localhost:4000/api/auth/verify-token", {token});
         if (!response.data.isSuccess){
             setIsAuthenticated(false);
             setLoading(false);

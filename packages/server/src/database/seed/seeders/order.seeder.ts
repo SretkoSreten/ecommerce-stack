@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, EntityManager } from 'typeorm';
 import { faker } from '@faker-js/faker';
-import { ShopOrder } from 'src/database/entities/order/order.entity';
-import { User } from 'src/database/entities/user/user.entity';
-import { UserPaymentMethod } from 'src/database/entities/payment/user-payment-method.entity';
-import { Address } from 'src/database/entities/address/address.entity';
-import { ShippingMethod } from 'src/database/entities/ship_method/ship_method.entity';
-import { Coupon } from 'src/database/entities/coupon/coupon.entity';
-import { OrderStatus } from 'src/database/entities/order/order_status.entity';
+import { ShopOrder } from '../../entities/order/order.entity';
+import { User } from '../../entities/user/user.entity';
+import { UserPaymentMethod } from '../../entities/payment/user-payment-method.entity';
+import { Address } from '../../entities/address/address.entity';
+import { ShippingMethod } from '../../entities/ship_method/ship_method.entity';
+import { Coupon } from '../../entities/coupon/coupon.entity';
+import { OrderStatus } from '../../entities/order/order_status.entity';
 
 @Injectable()
 export class ShopOrderSeeder {

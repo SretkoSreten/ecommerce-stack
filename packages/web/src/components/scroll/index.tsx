@@ -7,7 +7,7 @@ import { fetchLayout } from "../../actions/layout.actions";
 
 const SpecialCase = () => {
   const dispatch = useDispatch();
-  const { loading, data } = useSelector((state: any) => state.layout);
+  const { data } = useSelector((state: any) => state.layout);
 
   useEffect(() => {
     dispatch<any>(fetchLayout());

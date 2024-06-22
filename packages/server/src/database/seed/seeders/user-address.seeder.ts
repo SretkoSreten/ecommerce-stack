@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Address } from 'src/database/entities/address/address.entity';
-import { UserAddress } from 'src/database/entities/address/user-address.entity';
-import { User } from 'src/database/entities/user/user.entity';
+import { Address } from '../../entities/address/address.entity';
+import { UserAddress } from '../../entities/address/user-address.entity';
+import { User } from '../../entities/user/user.entity';
 import { Repository, EntityManager } from 'typeorm';
 
 

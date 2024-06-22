@@ -3,10 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, EntityManager } from 'typeorm';
 
 import { faker } from '@faker-js/faker';
-import { Address } from 'src/database/entities/address/address.entity';
-import { Country } from 'src/database/entities/country/country.entity';
-import { User } from 'src/database/entities/user/user.entity';
-import { UserAddress } from 'src/database/entities/address/user-address.entity';
+import { Address } from '../../entities/address/address.entity';
+import { Country } from '../../entities/country/country.entity';
+import { User } from '../../entities/user/user.entity';
+import { UserAddress } from '../../entities/address/user-address.entity';
 
 @Injectable()
 export class AddressSeeder {

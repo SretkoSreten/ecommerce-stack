@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker';
 import { InjectRepository } from '@nestjs/typeorm';
-import { OrderLine } from 'src/database/entities/order/order_line.entity';
-import { UserReview } from 'src/database/entities/review/review.entity';
-import { User } from 'src/database/entities/user/user.entity';
+import { OrderLine } from '../../entities/order/order_line.entity';
+import { UserReview } from '../../entities/review/review.entity';
+import { User } from '../../entities/user/user.entity';
 import { Repository } from 'typeorm';
 
 export class UserReviewSeeder {

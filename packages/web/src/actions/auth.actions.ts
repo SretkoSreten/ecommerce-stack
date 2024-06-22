@@ -9,6 +9,8 @@ import {
 import { normalizeErrors } from "../utils/normalizeErrors";
 import { FormValues } from "../modules/login/dto/login.dto";
 
+const API_URL = import.meta.env.VITE_BACKEND_URL;
+
 export const loginRequest = () => ({
   type: LOGIN_REQUEST,
 });
@@ -28,7 +30,7 @@ export const login = (values: FormValues) => async (dispatch: Dispatch) => {
   try {
     const {
       data: { message, isSuccess, errorCode, data },
-    }: any = await axios.post("/api/auth/login", values);
+    }: any = await axios.post(`${API_URL}/api/auth/login`, values);
 
     if (!isSuccess) {
       return dispatch(loginFailure(normalizeErrors({ message, errorCode })))

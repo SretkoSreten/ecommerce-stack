@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, EntityManager } from 'typeorm';
 import { faker } from '@faker-js/faker';
-import { Coupon } from 'src/database/entities/coupon/coupon.entity';
+import { Coupon } from '../../entities/coupon/coupon.entity';
 
 @Injectable()
 export class CouponSeeder {

@@ -6,7 +6,7 @@ import { useSearchParams } from "react-router-dom";
 
 export const AddressBook: React.FC<AddressProps> = (props) => {
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [, setSearchParams] = useSearchParams();
 
   const { id, address } = props;
 

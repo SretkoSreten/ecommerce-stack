@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  server:
+    build:
+      context: ./packages/server
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    environment:
+      - JWT_SECRET=qwdwqwqdwqdqwd
+      - STRIPE_SECRET_KEY=sk_test_51PRDWY1C56reqfLSPoLDuTI8T7npwnnqmFqU3M1Iqqq89UqcKA4mHxAH0L5010rZbXzYf6SEf2xhBjnwHhxaJqft00Gu4plg5y
+      - RETURN_URL=http://localhost:3000/home
+      - DATABASE_HOST=host.docker.internal
+      - DATABASE_PORT=3306
+      - DATABASE_USER=root
+      - DATABASE_PASSWORD=
+      - DATABASE_NAME=ecommerce1
+      - API_BASE_URL=http://localhost:3000
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - app-network
+  mysql:
+    image: mysql:latest
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      MYSQL_DATABASE: ecommerce
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
+    command: ["--bind-address=0.0.0.0"]
+  web: 
+    build: 
+      context: ./packages/web
+      dockerfile: Dockerfile
+    environment:
+      - VITE_BACKEND_URL=http://localhost:4000
+      - VITE_API_BASE_URL=http://server:4000
+    depends_on:
+      - server
+    networks:
+      - app-network
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+networks:
+  app-network:
+volumes:
+  mysql-data:

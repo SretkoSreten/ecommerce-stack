@@ -21,13 +21,15 @@ export const fetchProductFailure = (error: string) => ({
   payload: error,
 });
 
+const API_URL = import.meta.env.VITE_BACKEND_URL;
+
 export const fetchProduct = (productId: string) => {
   return (dispatch: Dispatch) => {
     dispatch(fetchProductRequest());
 
     Promise.all([
-      axios.get(`/api/products/${productId}`),
-      axios.get(`/api/products/sale`),
+      axios.get(`${API_URL}/api/products/${productId}`),
+      axios.get(`${API_URL}/api/products/sale`),
     ])
       .then(([productResponse, saleResponse]) => {
         const product = productResponse.data.data;

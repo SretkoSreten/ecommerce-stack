@@ -42,6 +42,9 @@ export const createPaymentRequest = () => ({
   type: CREATE_PAYMENT_REQUEST,
 });
 
+const API_URL = import.meta.env.VITE_BACKEND_URL;
+
+
 export const fetchPayments = () => {
   return async (dispatch: Dispatch) => {
     dispatch(getPaymentsRequest());
@@ -51,7 +54,7 @@ export const fetchPayments = () => {
 
       const [paymentsResponse] = await Promise.all([
         token
-          ? axios.get("/api/payments/user", {
+          ? axios.get(`${API_URL}/api/payments/user`, {
               headers: { Authorization: `Bearer ${token}` },
             })
           : Promise.resolve({ data: null }),
@@ -71,7 +74,7 @@ export const selectPayment = (id: number) => {
 
     const [selectResponse] = await Promise.all([
       token
-        ? axios.get(`/api/payments/select/${id}`, {
+        ? axios.get(`${API_URL}/api/payments/select/${id}`, {
             headers: { Authorization: `Bearer ${token}` },
           })
         : Promise.resolve({ data: null }),
@@ -82,7 +85,7 @@ export const selectPayment = (id: number) => {
     if (response.isSuccess) {
       const [paymentResponse] = await Promise.all([
         token
-          ? axios.get("/api/payments/user", {
+          ? axios.get(`${API_URL}/api/payments/user`, {
               headers: { Authorization: `Bearer ${token}` },
             })
           : Promise.resolve({ data: null }),
@@ -104,7 +107,7 @@ export const deletePayment = (id: number) => {
 
       const [deletePaymentResponse] = await Promise.all([
         token
-          ? axios.delete(`/api/payments/${id}`, {
+          ? axios.delete(`${API_URL}/api/payments/${id}`, {
               headers: { Authorization: `Bearer ${token}` },
             })
           : Promise.resolve({ data: null }),
@@ -115,7 +118,7 @@ export const deletePayment = (id: number) => {
       if (deletePayment.isSuccess) {
         const [paymentsResponse] = await Promise.all([
           token
-            ? axios.get("/api/payments/user", {
+            ? axios.get(`${API_URL}/api/payments/user`, {
                 headers: { Authorization: `Bearer ${token}` },
               })
             : Promise.resolve({ data: null }),
@@ -138,7 +141,7 @@ export const createPayment = (values: any) => {
 
       const {
         data: { isSuccess, errors, errorCode },
-      }: any = await axios.post(`/api/payments/create`, values, {
+      }: any = await axios.post(`${API_URL}/api/payments/create`, values, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -150,7 +153,7 @@ export const createPayment = (values: any) => {
 
       const [paymentsResponse] = await Promise.all([
         token
-          ? axios.get("/api/payments/user", {
+          ? axios.get(`${API_URL}/api/payments/user`, {
               headers: { Authorization: `Bearer ${token}` },
             })
           : Promise.resolve({ data: null }),

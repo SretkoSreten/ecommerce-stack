@@ -13,6 +13,8 @@ import {
 } from "../constants/actions.constants";
 import { normalizeErrors } from "../utils/normalizeErrors";
 
+const API_URL = import.meta.env.VITE_BACKEND_URL;
+
 export const getAddressesRequest = () => ({
   type: GET_ADDRESSES_REQUEST,
 });
@@ -66,7 +68,7 @@ export const editAddress = (addressId: string, values: any) => {
 
       const {
         data: { isSuccess, errors, errorCode },
-      }: any = await axios.patch(`/api/address/${addressId}`, values, {
+      }: any = await axios.patch(`${API_URL}/api/address/${addressId}`, values, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -93,7 +95,7 @@ export const createAddress = (values: any) => {
 
       const {
         data: { isSuccess, errors, errorCode },
-      }: any = await axios.post(`/api/address/create`, values, {
+      }: any = await axios.post(`${API_URL}/api/address/create`, values, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -119,7 +121,7 @@ export const fetchCountries = () => {
 
     try {
       const [countryResponse] = await Promise.all([
-        axios.get(`/api/countries`),
+        axios.get(`${API_URL}/api/countries`),
       ]);
 
       const countries = countryResponse.data.data;
@@ -140,7 +142,7 @@ export const fetchAddress = (addressId: string) => {
 
       const [addressResponse, countryResponse] = await Promise.all([
         token
-          ? axios.get(`/api/address/${addressId}`, {
+          ? axios.get(`${API_URL}/api/address/${addressId}`, {
               headers: { Authorization: `Bearer ${token}` },
             })
           : Promise.resolve({ data: null }),
@@ -163,7 +165,7 @@ export const selectAddress = (addressId: number) => {
 
     const [selectResponse] = await Promise.all([
       token
-        ? axios.get(`/api/address/select/${addressId}`, {
+        ? axios.get(`${API_URL}/api/address/select/${addressId}`, {
             headers: { Authorization: `Bearer ${token}` },
           })
         : Promise.resolve({ data: null }),
@@ -174,7 +176,7 @@ export const selectAddress = (addressId: number) => {
     if (response.isSuccess) {
       const [addressResponse] = await Promise.all([
         token
-          ? axios.get("/api/address/user", {
+          ? axios.get(`${API_URL}/api/address/user`, {
               headers: { Authorization: `Bearer ${token}` },
             })
           : Promise.resolve({ data: null }),
@@ -193,12 +195,12 @@ export const deleteAddress = (addressId: number) => {
 
     const [deleteResponse, addressResponse] = await Promise.all([
       token
-        ? axios.delete(`/api/address/${addressId}`, {
+        ? axios.delete(`${API_URL}/api/address/${addressId}`, {
             headers: { Authorization: `Bearer ${token}` },
           })
         : Promise.resolve({ data: null }),
       token
-        ? axios.get("/api/address/user", {
+        ? axios.get(`${API_URL}/api/address/user`, {
             headers: { Authorization: `Bearer ${token}` },
           })
         : Promise.resolve({ data: null }),
@@ -221,7 +223,7 @@ export const fetchAddresses = () => {
 
       const [addressResponse] = await Promise.all([
         token
-          ? axios.get("/api/address/user", {
+          ? axios.get(`${API_URL}/api/address/user`, {
               headers: { Authorization: `Bearer ${token}` },
             })
           : Promise.resolve({ data: null }),

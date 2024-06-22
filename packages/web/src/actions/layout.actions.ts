@@ -37,11 +37,13 @@ export const clearSearch = () => ({
   type: CLEAR_SEARCH_ITEMS
 })
 
+const API_URL = import.meta.env.VITE_BACKEND_URL;
+
 
 export const searchProducts = (name: string) => {
   return async (dispatch: Dispatch) => {
     try {
-      const { data } = await axios.post("/api/products/search", { name });
+      const { data } = await axios.post(`${API_URL}/api/products/search`, { name });
       dispatch(getSearchSuccess(data.data));
     } catch (error) {}
   };
@@ -55,12 +57,12 @@ export const fetchLayout = () => {
       const token = localStorage.getItem("token");
 
       const [categoryResponse, authResponse, cartResponse] = await Promise.all([
-        axios.get("/api/categories/shop"),
+        axios.get(`${API_URL}/api/categories/shop`),
         token
-          ? axios.post("/api/auth/verify-token", { token })
+          ? axios.post(`${API_URL}/api/auth/verify-token`, { token })
           : Promise.resolve({ data: null }),
         token
-          ? axios.get("/api/carts/user/items", {
+          ? axios.get(`${API_URL}/api/carts/user/items`, {
               headers: { Authorization: `Bearer ${token}` },
             })
           : Promise.resolve({ data: null }),

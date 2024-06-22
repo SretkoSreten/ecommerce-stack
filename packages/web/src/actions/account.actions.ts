@@ -10,7 +10,9 @@ import {
   GET_ACCOUNT_SUCCESS,
   UPDATE_ACCOUNT_SUCCESS,
 } from "../constants/actions.constants";
-import { FormValues } from "../modules/addresses/edit/dto/address-edit.dto";
+import { FormValues } from "../modules/profile/dto/account-edit.dto";
+
+const API_URL = import.meta.env.VITE_BACKEND_URL;
 
 export const getAccountRequest = () => ({
   type: GET_ACCOUNT_REQUEST,
@@ -30,6 +32,7 @@ export const updateAccountSuccess = () => ({
   type: UPDATE_ACCOUNT_SUCCESS,
 });
 
+
 export const fetchAccount = () => {
   return async (dispatch: Dispatch) => {
     dispatch(getAccountRequest());
@@ -39,7 +42,7 @@ export const fetchAccount = () => {
 
       const [userResponse] = await Promise.all([
         token
-          ? axios.get("/api/users/auth", {
+          ? axios.get(`${API_URL}/api/users/auth`, {
               headers: { Authorization: `Bearer ${token}` },
             })
           : Promise.resolve({ data: null }),
@@ -58,7 +61,7 @@ export const deleteAccount = async () => {
 
   const [deleteResponse] = await Promise.all([
     token
-      ? axios.delete(`/api/users/delete`, {
+      ? axios.delete(`${API_URL}/api/users/delete`, {
           headers: { Authorization: `Bearer ${token}` },
         })
       : Promise.resolve({ data: null }),
@@ -80,7 +83,7 @@ export const updateAccount = (values: FormValues) => async (
 
     const {
       data: { isSuccess, errors, errorCode },
-    }: any = await axios.patch("/api/users/update", values, {
+    }: any = await axios.patch(`${API_URL}/api/users/update`, values, {
       headers: { Authorization: `Bearer ${token}` },
     });
 

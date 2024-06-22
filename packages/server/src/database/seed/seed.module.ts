@@ -87,5 +87,6 @@ import { UserReviewSeeder } from './seeders/review.seeder';
     OrderLineSeeder,
     UserReviewSeeder
   ],
+  exports: [SeedService]
 })
 export class SeedModule {}

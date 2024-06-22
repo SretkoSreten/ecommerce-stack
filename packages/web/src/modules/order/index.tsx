@@ -18,7 +18,7 @@ const setParamsFromSearch = (
 const OrderConnector: React.FC = () => {
 
   const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, ] = useSearchParams();
   const [address, setAddress] = useState<string | undefined>();
   const [payment, setPayment] = useState<string | undefined>();
   const [shipping, setShipping] = useState<string | undefined>();

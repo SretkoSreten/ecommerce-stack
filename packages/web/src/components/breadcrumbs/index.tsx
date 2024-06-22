@@ -7,7 +7,7 @@ interface BreadcrumbsProps {
   title: string;
 }
 
-const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ prevLocation, title }) => {
+const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ title }) => {
   const location = useLocation();
   const [locationPath, setLocationPath] = useState<string>("");
 

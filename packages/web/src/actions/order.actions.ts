@@ -73,6 +73,8 @@ export const createOrderSuccess = () => ({
   type: CREATE_ORDER_SUCCESS
 });
 
+const API_URL = import.meta.env.VITE_BACKEND_URL;
+
 export const deletePayment = (id: number) => {
   return async (dispatch: Dispatch) => {
     try {
@@ -80,12 +82,12 @@ export const deletePayment = (id: number) => {
 
       const [deletePaymentResponse, paymentsResponse] = await Promise.all([
         token
-          ? axios.delete(`/api/payments/${id}`, {
+          ? axios.delete(`${API_URL}/api/payments/${id}`, {
               headers: { Authorization: `Bearer ${token}` },
             })
           : Promise.resolve({ data: null }),
         token
-          ? axios.get("/api/payments/user", {
+          ? axios.get(`${API_URL}/api/payments/user`, {
               headers: { Authorization: `Bearer ${token}` },
             })
           : Promise.resolve({ data: null }),
@@ -112,7 +114,7 @@ export const createOrder = (values: any) => {
 
     const {
       data: { message, isSuccess, errorCode },
-    }: any = await axios.post("/api/orders/create", values, {
+    }: any = await axios.post(`${API_URL}/api/orders/create`, values, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -130,7 +132,7 @@ export const orderAgain = (id: number) => {
     const token = localStorage.getItem("token");
     const {
       data: { message, isSuccess, errorCode },
-    }: any = await axios.get(`/api/orders/order/${id}`, {
+    }: any = await axios.get(`${API_URL}/api/orders/order/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -140,7 +142,7 @@ export const orderAgain = (id: number) => {
 
     const [ordersResponse, statusResponse] = await Promise.all([
       token
-        ? axios.get("/api/orders/user", {
+        ? axios.get(`${API_URL}/api/orders/user`, {
             headers: { Authorization: `Bearer ${token}` },
           })
         : Promise.resolve({ data: null }),
@@ -171,18 +173,18 @@ export const fetchOrders = () => {
         cartResponse,
       ] = await Promise.all([
         token
-          ? axios.get("/api/payments/user", {
+          ? axios.get(`${API_URL}/api/payments/user`, {
               headers: { Authorization: `Bearer ${token}` },
             })
           : Promise.resolve({ data: null }),
         token
-          ? axios.get("/api/address/user", {
+          ? axios.get(`${API_URL}/api/address/user`, {
               headers: { Authorization: `Bearer ${token}` },
             })
           : Promise.resolve({ data: null }),
-        axios.get("/api/shipping"),
+        axios.get(`${API_URL}/api/shipping`),
         token
-          ? axios.get("/api/carts/user", {
+          ? axios.get(`${API_URL}/api/carts/user`, {
               headers: { Authorization: `Bearer ${token}` },
             })
           : Promise.resolve({ data: null }),
@@ -208,7 +210,7 @@ export const fetchAccOrders = () => {
 
       const [ordersResponse, statusResponse] = await Promise.all([
         token
-          ? axios.get(`/api/orders/user/${window.location.search}`, {
+          ? axios.get(`${API_URL}/api/orders/user/${window.location.search}`, {
               headers: { Authorization: `Bearer ${token}` },
             })
           : Promise.resolve({ data: null }),
@@ -232,7 +234,7 @@ export const cancelOrder = (id: number) => {
 
       const [cancelOrderResponse] = await Promise.all([
         token
-          ? axios.get(`/api/orders/cancel/${id}`, {
+          ? axios.get(`${API_URL}/api/orders/cancel/${id}`, {
               headers: { Authorization: `Bearer ${token}` },
             })
           : Promise.resolve({ data: null }),
@@ -243,11 +245,11 @@ export const cancelOrder = (id: number) => {
       if (cancelOrder.isSuccess) {
         const [ordersResponse, statusResponse] = await Promise.all([
           token
-            ? axios.get("/api/orders/user", {
+            ? axios.get(`${API_URL}/api/orders/user`, {
                 headers: { Authorization: `Bearer ${token}` },
               })
             : Promise.resolve({ data: null }),
-          axios.get(`/api/status`),
+          axios.get(`${API_URL}/api/status`),
         ]);
 
         const orders = ordersResponse.data.data;
@@ -273,7 +275,7 @@ export const fetchOrder = (id: string) => {
 
       const [orderResponse] = await Promise.all([
         token
-          ? axios.get(`/api/orders/${id}`, {
+          ? axios.get(`${API_URL}/api/orders/${id}`, {
               headers: { Authorization: `Bearer ${token}` },
             })
           : Promise.resolve({ data: null }),

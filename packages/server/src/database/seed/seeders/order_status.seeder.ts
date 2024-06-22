@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, EntityManager } from 'typeorm';
 import { faker } from '@faker-js/faker';
-import { OrderStatus } from 'src/database/entities/order/order_status.entity';
-import { StatusType } from 'src/constants/status.constants';
+import { OrderStatus } from '../../entities/order/order_status.entity';
+import { StatusType } from '../../../constants/status.constants';
 
 @Injectable()
 export class OrderStatusSeeder {
