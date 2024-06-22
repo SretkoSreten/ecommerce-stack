@@ -36,7 +36,6 @@ __tests__/
 # Ignore git-related files
 .git
 .gitignore
-
 # Ignore package-lock.json (if using npm)
 package-lock.json
 
