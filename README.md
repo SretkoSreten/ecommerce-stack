@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # eCommerce Platform
 
 ## Table of Contents
