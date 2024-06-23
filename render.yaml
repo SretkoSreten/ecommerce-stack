@@ -1,30 +1,43 @@
 services:
-  - type: web
-    name: server
+  - type: private_service
+    name: mysql-db
     env: docker
-    dockerfilePath: ./packages/server/Dockerfile
-    buildContext: ./packages/server
-    port: 4000
+    image: mysql:latest
     envVars:
-      - key: JWT_SECRET
-        value: qwdwqwqdwqdqwd
-      - key: STRIPE_SECRET_KEY
-        value: sk_test_51PRDWY1C56reqfLSPoLDuTI8T7npwnnqmFqU3M1Iqqq89UqcKA4mHxAH0L5010rZbXzYf6SEf2xhBjnwHhxaJqft00Gu4plg5y
-      - key: RETURN_URL
-        value: http://localhost:3000/home
-      - key: DATABASE_HOST
-        value: mysql-db
-      - key: DATABASE_PORT
-        value: "3306"
-      - key: DATABASE_USER
-        value: root
-      - key: DATABASE_PASSWORD
-        value: ""
-      - key: DATABASE_NAME
-        value: ecommerce1
-      - key: API_BASE_URL
-        value: http://localhost:3000
+      - key: MYSQL_DATABASE
+        value: ecommerce
+      - key: MYSQL_ALLOW_EMPTY_PASSWORD
+        value: "yes"
+    volumes:
+      - name: mysql-data
+        mountPath: /var/lib/mysql
+    command: 
+      - --bind-address=0.0.0.0
+    startCommand: ["mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+
+  - type: web
+    name: frontend-web
+    env: docker
+    dockerfilePath: ./packages/web/Dockerfile
+    buildContext: ./packages/web
+    port: 3000
+    envVars:
+      - key: VITE_BACKEND_URL
+        value: http://localhost:4000
+      - key: VITE_API_BASE_URL
+        value: http://backend-server:4000
     healthCheckPath: /health
-    startCommand: ["npm", "start"]
-    dependencies:
+    startCommand: ["npm", "run", "dev"]
+    
+  - type: private_service
+    name: phpmyadmin
+    env: docker
+    image: phpmyadmin/phpmyadmin:latest
+    envVars:
+      - key: PMA_HOST
+        value: mysql-db
+      - key: MYSQL_ROOT_PASSWORD
+        value: root_password
+    port: 80
+    dependsOn:
       - name: mysql-db
