@@ -1,4 +1,3 @@
-```
 # Fullstack Project with Docker Compose
 
 This project demonstrates a full-stack web application using Docker Compose to orchestrate multiple services including a backend server, MySQL database, and a React frontend built with Vite.
@@ -12,7 +11,6 @@ Make sure you have Docker and Docker Compose installed on your system.
 
 ## Project Structure
 
-```
 packages/
 │
 ├── server/          # Backend server (NestJs)
