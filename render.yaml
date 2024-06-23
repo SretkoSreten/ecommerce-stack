@@ -1,43 +1,12 @@
 services:
   - type: web
-    name: mysql-db
-    env: docker
-    image: mysql:latest
-    envVars:
-      - key: MYSQL_DATABASE
-        value: ecommerce
-      - key: MYSQL_ALLOW_EMPTY_PASSWORD
-        value: "yes"
-    volumes:
-      - name: mysql-data
-        mountPath: /var/lib/mysql
-    command: 
-      - --bind-address=0.0.0.0
-    startCommand: ["mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
-
-  - type: web
     name: frontend-web
     env: docker
     dockerfilePath: ./packages/web/Dockerfile
-    buildContext: ./packages/web
-    port: 3000
     envVars:
       - key: VITE_BACKEND_URL
         value: http://localhost:4000
       - key: VITE_API_BASE_URL
         value: http://backend-server:4000
-    healthCheckPath: /health
-    startCommand: ["npm", "run", "dev"]
-
-  - type: web
-    name: phpmyadmin
-    env: docker
-    image: phpmyadmin/phpmyadmin:latest
-    envVars:
-      - key: PMA_HOST
-        value: mysql-db
-      - key: MYSQL_ROOT_PASSWORD
-        value: root_password
-    port: 80
-    dependsOn:
-      - name: mysql-db
+    startCommand: npm run dev
+    buildCommand: npm run build
