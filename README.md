@@ -77,4 +77,4 @@ Configure environment variables for Stripe API keys, MySQL connection details, e
 Open `http://localhost:3000` in your web browser.
 
 6.  **How application works**: 
-[![Watch the video](https://www.veed.io/embed/cea0b9f2-d460-4f92-8e20-4c9185ad1788)](https://www.veed.io/view/cea0b9f2-d460-4f92-8e20-4c9185ad1788?panel=share)
+[![Watch the video]](https://res.cloudinary.com/publicproject/video/upload/v1719168576/ecommerce/Screen_Recording_-_Jun_23_2024_vlytwx.mp4)
