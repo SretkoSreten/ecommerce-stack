@@ -52,7 +52,7 @@ To get a local copy of the project up and running, follow these steps
 
 3. **Set Up Environment Variables**: 
 - Configure environment variables for Stripe API keys, MySQL connection details, etc.
-- For **DATABASE_HOST** set host.docker.internal for docker composing.
+- For **DATABASE_HOST** set **host.docker.internal**
 
 5. **Start Application**:
 
