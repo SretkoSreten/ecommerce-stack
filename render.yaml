@@ -1,5 +1,5 @@
 services:
-  - type: private_service
+  - type: web
     name: mysql-db
     env: docker
     image: mysql:latest
@@ -28,8 +28,8 @@ services:
         value: http://backend-server:4000
     healthCheckPath: /health
     startCommand: ["npm", "run", "dev"]
-    
-  - type: private_service
+
+  - type: web
     name: phpmyadmin
     env: docker
     image: phpmyadmin/phpmyadmin:latest
