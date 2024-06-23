@@ -1,5 +1,5 @@
 # eCommerce Platform
-
+![Screenshot](https://github.com/SretkoSreten/ecommerce-stack/assets/87679591/f4a83377-0dd4-4fec-86bc-eec5b6e76fa9)
 ## Table of Contents
 - [Introduction](#introduction)
 - [Technologies Used](#technologies-used)
