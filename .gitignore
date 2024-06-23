@@ -23,7 +23,6 @@ node_modules/*
 
 # Ignore dotenv files (if used for environment variables)
 .env
-.env.*
 
 # Ignore test files and folders (if not needed in production)
 tests/

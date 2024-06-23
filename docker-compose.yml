@@ -11,17 +11,17 @@ services:
       test: ["CMD", "curl", "--fail", "http://localhost:4000"]  # Adjust health check URL and command
       interval: 30s   # Check health every 30 seconds
       timeout: 5s    # Timeout for each health check attempt
-      retries: 3      # Number of retries before considering the container unhealthy
+      retries: 5      # Number of retries before considering the container unhealthy
     environment:
-      - JWT_SECRET=qwdwqwqdwqdqwd
-      - STRIPE_SECRET_KEY=sk_test_51PRDWY1C56reqfLSPoLDuTI8T7npwnnqmFqU3M1Iqqq89UqcKA4mHxAH0L5010rZbXzYf6SEf2xhBjnwHhxaJqft00Gu4plg5y
-      - RETURN_URL=http://localhost:3000/home
-      - DATABASE_HOST=host.docker.internal
-      - DATABASE_PORT=3306
-      - DATABASE_USER=root
-      - DATABASE_PASSWORD=
-      - DATABASE_NAME=ecommerce
-      - API_BASE_URL=http://localhost:3000
+      - JWT_SECRET=${JWT_SECRET}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - RETURN_URL=${RETURN_URL}
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_PORT=${DATABASE_PORT}
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - API_BASE_URL=${API_BASE_URL}
     depends_on:
       mysql:
         condition: service_healthy
@@ -38,7 +38,7 @@ services:
       timeout: 5s
       retries: 5
     environment:
-      MYSQL_DATABASE: ecommerce
+      MYSQL_DATABASE: ${DATABASE_NAME}
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     volumes:
       - mysql-data:/var/lib/mysql
@@ -50,8 +50,10 @@ services:
       context: ./packages/web
       dockerfile: Dockerfile
     environment:
-      - VITE_BACKEND_URL=http://localhost:4000
-      - VITE_API_BASE_URL=http://server:4000
+      - VITE_BACKEND_URL=${VITE_BACKEND_URL}
+      - VITE_API_BASE_URL=${VITE_API_BASE_URL}
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:3000"] 
     depends_on:
       server:
         condition: service_healthy
@@ -64,8 +66,8 @@ services:
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
     environment:
-      PMA_HOST: host.docker.internal
-      MYSQL_ROOT_PASSWORD: root_password
+      PMA_HOST: ${DATABASE_HOST}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
       - "8080:80"
     depends_on:

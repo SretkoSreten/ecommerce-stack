@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import Slider from "react-slick";
 import Image from "../../layouts/layout/Image";
 import bannerImgOne from "../../assets/images/banner/bannerImgOne.jpg";
@@ -84,16 +83,12 @@ const Banner: React.FC = () => {
   return (
     <div className="w-full relative bg-white">
       <Slider {...settings}>
-        <Link to="/offer">
-          <div className="w-full">
-            <Image className="w-full" imgSrc={bannerImgOne} />
-          </div>
-        </Link>
-        <Link to="/offer">
-          <div>
-            <Image imgSrc={bannerImgTwo} />
-          </div>
-        </Link>
+        <div className="w-full">
+          <Image className="w-full" imgSrc={bannerImgOne} />
+        </div>
+        <div>
+          <Image imgSrc={bannerImgTwo} />
+        </div>
       </Slider>
     </div>
   );

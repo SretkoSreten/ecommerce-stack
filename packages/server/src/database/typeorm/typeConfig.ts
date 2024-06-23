@@ -1,16 +1,14 @@
-import { config } from 'dotenv';
-import { resolve } from 'path';
 import { DataSourceOptions } from 'typeorm';
 
 export const dataSourceOptions: DataSourceOptions = {
   type: 'mysql',
-  host: 'host.docker.internal',
-  port: 3306,
-  database: 'ecommerce',
-  username: 'root',
-  password: "",
+  host: process.env.DATABASE_HOST || 'localhost', // Default to localhost if DB_HOST is not set
+  port: parseInt(process.env.DATABASE_PORT, 10) || 3306, // Default to 3306 if DB_PORT is not set
+  database: process.env.DATABASE_NAME || 'ecommerce', // Default to 'ecommerce' if DB_DATABASE is not set
+  username: process.env.DATABASE_USER || 'root', // Default to 'root' if DB_USERNAME is not set
+  password: process.env.DATABASE_PASSWORD || '',
   entities: [__dirname + "/../entities/**/*.entity{.ts,.js}"],
-  migrations: ["../migration/history/*{.js,.ts}"],
+  migrations: [__dirname + "/../migration/history/*{.js,.ts}"],
   logger: 'simple-console',
   synchronize: true, // never use TRUE in production!
   dropSchema: true,
