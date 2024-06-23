@@ -72,11 +72,6 @@ Configure environment variables for Stripe API keys, MySQL connection details, e
 5. **Access the Application**: 
 Open `http://localhost:3000` in your web browser.
 
-## Contributing
-
-Contributions are welcome! Please fork the repository and submit pull requests to propose and discuss changes.
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
+6.  **How application works**: 
+[![Watch the video](https://www.veed.io/embed/cea0b9f2-d460-4f92-8e20-4c9185ad1788)](https://www.veed.io/view/cea0b9f2-d460-4f92-8e20-4c9185ad1788?panel=share)
 
