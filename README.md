@@ -1,5 +1,7 @@
 # eCommerce Platform
 ![Screenshot](https://github.com/SretkoSreten/ecommerce-stack/assets/87679591/f4a83377-0dd4-4fec-86bc-eec5b6e76fa9)
+# Database Design
+![Ecommerce](https://github.com/SretkoSreten/ecommerce-stack/assets/87679591/76f71c59-bc8e-4020-91e3-6304563f9d47)
 ## Table of Contents
 - [Introduction](#introduction)
 - [Technologies Used](#technologies-used)
